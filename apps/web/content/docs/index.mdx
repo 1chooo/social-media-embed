@@ -13,13 +13,13 @@ import { EmbedCard } from "embed-card"
 <EmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
 ```
 
-The current release line documented here is **0.1.2** (see [npm](https://www.npmjs.com/package/embed-card)).
+Published as [`embed-card` on npm](https://www.npmjs.com/package/embed-card).
 
 ## What this repo includes
 
 - A publishable package in `packages/embed-card`
 - A Next.js docs site and interactive playground in `apps/web`
-- **Runnable starter apps** under `examples/` (Next.js App Router, Vite + React, Vue, Svelte, and vanilla TypeScript). Each example pins `embed-card` **0.1.2** and shares the same demo layout so you can compare stacks side by side.
+- **Runnable starter apps** under `examples/` (Next.js App Router, Vite + React, Vue, Svelte, and vanilla TypeScript). Each example installs `embed-card` from npm and shares the same demo layout so you can compare stacks side by side.
 
 The monorepo uses **pnpm** workspaces and **Turborepo**: root `pnpm build` and `pnpm typecheck` include the example apps; root `pnpm dev` runs the docs app only so local development stays a single dev server.
 

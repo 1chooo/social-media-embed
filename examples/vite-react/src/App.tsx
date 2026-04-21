@@ -15,7 +15,7 @@ const DEMO_THEME = {
 export default function App() {
   return (
     <main className="demo">
-      <p className="eyebrow">embed-card 0.1.2 · Vite + React</p>
+      <p className="eyebrow">embed-card · Vite + React</p>
       <h1>Turn a URL into a rich embed card</h1>
       <p className="lede">
         This app imports <code>EmbedCard</code> from <code>embed-card</code>.

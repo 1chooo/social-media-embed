@@ -11,7 +11,7 @@ if (!app) {
 
 app.innerHTML = `
   <main class="demo">
-    <p class="eyebrow">embed-card 0.1.2 · Vite + Vanilla</p>
+    <p class="eyebrow">embed-card · Vite + Vanilla</p>
     <h1>Turn a URL into a rich embed card</h1>
     <p class="lede">
       Any framework can use the custom element from

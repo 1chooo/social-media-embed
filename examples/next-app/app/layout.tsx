@@ -5,7 +5,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "embed-card — Next.js App Router",
-  description: "Minimal Next.js example using embed-card 0.1.2",
+  description: "Minimal Next.js example using embed-card",
 }
 
 export default function RootLayout({

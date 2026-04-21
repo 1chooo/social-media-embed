@@ -33,7 +33,7 @@ export default function Page() {
           color: "#64748b",
         }}
       >
-        embed-card 0.1.2 · Next.js (App Router)
+        embed-card · Next.js (App Router)
       </p>
       <h1
         style={{

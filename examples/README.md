@@ -1,6 +1,6 @@
 # Examples
 
-Each folder is a **standalone app** (similar in spirit to [Next.js examples](https://github.com/vercel/next.js/tree/canary/examples)) that pins `embed-card` **0.1.2** and shows the same demo with the same layout across stacks.
+Each folder is a **standalone app** (similar in spirit to [Next.js examples](https://github.com/vercel/next.js/tree/canary/examples)) that depends on `embed-card` and shows the same demo with the same layout across stacks.
 
 ## Run one example locally
 
