@@ -4,6 +4,7 @@ import { createMDX } from "fumadocs-mdx/next"
 const withMDX = createMDX()
 
 const nextConfig: NextConfig = {
+  basePath: "/embed-card",
   transpilePackages: ["embed-card"],
   redirects: async () => [
     {
