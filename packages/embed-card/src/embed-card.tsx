@@ -16,6 +16,10 @@ function cx(...values: Array<string | undefined>): string {
 }
 
 const rootStyle: CSSProperties = {
+  boxSizing: "border-box",
+  width: "100%",
+  maxWidth: "100%",
+  minWidth: 0,
   display: "grid",
   gap: "1rem",
   padding: "1.25rem",
@@ -89,9 +93,17 @@ export function EmbedCard({
           alignItems: "flex-start",
           justifyContent: "space-between",
           gap: "1rem",
+          minWidth: 0,
         }}
       >
-        <div style={{ display: "grid", gap: "0.35rem" }}>
+        <div
+          style={{
+            display: "grid",
+            gap: "0.35rem",
+            minWidth: 0,
+            flex: "1 1 0%",
+          }}
+        >
           <span
             style={{
               color: "var(--embed-card-muted)",
@@ -108,6 +120,7 @@ export function EmbedCard({
               fontSize: "1.25rem",
               lineHeight: 1.15,
               fontWeight: 700,
+              overflowWrap: "anywhere",
             }}
           >
             {resolved.title}
@@ -118,6 +131,7 @@ export function EmbedCard({
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
             borderRadius: "999px",
             border: "1px solid color-mix(in srgb, var(--embed-card-accent) 24%, white 76%)",
             background: "color-mix(in srgb, var(--embed-card-accent) 12%, white 88%)",
@@ -190,7 +204,9 @@ export function EmbedCard({
           >
             Fallback preview
           </span>
-          <strong style={{ fontSize: "1rem" }}>{resolved.displayUrl}</strong>
+          <strong style={{ fontSize: "1rem", overflowWrap: "anywhere" }}>
+            {resolved.displayUrl}
+          </strong>
           <span style={{ color: "var(--embed-card-accent)", fontWeight: 600 }}>
             {ctaLabel ?? resolved.renderer.ctaLabel ?? "Open original"}
           </span>
@@ -210,12 +226,15 @@ export function EmbedCard({
           justifyContent: "space-between",
           borderTop: "1px solid color-mix(in srgb, var(--embed-card-border) 80%, white 20%)",
           paddingTop: "0.9rem",
+          minWidth: 0,
         }}
       >
         <span
           style={{
             color: "var(--embed-card-muted)",
             fontSize: "0.88rem",
+            overflowWrap: "anywhere",
+            minWidth: 0,
           }}
         >
           {resolved.displayUrl}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import type { CSSProperties, ReactNode } from "react"
 
 import { RootProvider } from "fumadocs-ui/provider/next"
@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   },
   description:
     "Documentation and live demos for the embed-card package in one Next.js app.",
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 }
 
 const fontVariables = {

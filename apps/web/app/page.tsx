@@ -15,14 +15,14 @@ const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-14 px-6 py-10 md:px-10 lg:gap-18 lg:py-14">
-      <section className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div className="space-y-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-14 px-6 py-10 md:px-10 lg:gap-16 lg:py-14">
+      <section className="grid min-w-0 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="min-w-0 space-y-6">
           <div className="inline-flex rounded-full border border-fd-border/70 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground dark:bg-white/5">
             One app for docs and demos
           </div>
           <div className="space-y-4">
-            <h1 className="text-5xl font-semibold tracking-[-0.06em] text-balance sm:text-6xl">
+            <h1 className="text-balance text-4xl font-semibold tracking-[-0.06em] sm:text-5xl lg:text-6xl">
               Ship the package docs and the live playground from the same
               Next.js app.
             </h1>
@@ -62,20 +62,22 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="rounded-[34px] border border-fd-border/70 bg-white/80 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.12)] dark:bg-white/5 sm:p-7">
-          <EmbedCard
-            theme={{
-              accentColor: "#e11d48",
-              borderColor: "rgba(225, 29, 72, 0.2)",
-              radius: 30,
-              shadow: "0 28px 100px rgba(225, 29, 72, 0.16)",
-            }}
-            url={exampleUrl}
-          />
+        <div className="min-w-0 rounded-[34px] border border-fd-border/70 bg-white/80 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.12)] dark:bg-white/5 sm:p-7">
+          <div className="w-full min-w-0">
+            <EmbedCard
+              theme={{
+                accentColor: "#e11d48",
+                borderColor: "rgba(225, 29, 72, 0.2)",
+                radius: 30,
+                shadow: "0 28px 100px rgba(225, 29, 72, 0.16)",
+              }}
+              url={exampleUrl}
+            />
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid min-w-0 gap-4 md:grid-cols-3">
         <article className="rounded-[28px] border border-fd-border/70 bg-white/70 p-5 dark:bg-white/5">
           <Boxes className="size-5 text-rose-500" />
           <h2 className="mt-4 text-lg font-semibold">One surface</h2>
