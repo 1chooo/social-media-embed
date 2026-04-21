@@ -17,7 +17,7 @@ const defaultTheme: Required<EmbedCardTheme> = {
   textColor: "#0f172a",
   mutedColor: "rgba(15, 23, 42, 0.62)",
   radius: "24px",
-  shadow: "0 24px 80px rgba(15, 23, 42, 0.14)",
+  shadow: "none",
 }
 
 function toSize(value: number | string | undefined, fallback: string): string {

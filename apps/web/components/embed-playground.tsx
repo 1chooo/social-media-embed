@@ -132,7 +132,7 @@ const DEFAULTS = {
   accentHex: "#e11d48",
   radius: 28,
   borderAlpha: 22,
-  shadowAlpha: 18,
+  shadowAlpha: 0,
   shadowSpread: 72,
   bgTint: 8,
   mutedStrength: 40,
@@ -157,7 +157,7 @@ export function Example() {
         borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
         mutedColor: ${JSON.stringify(theme.mutedColor ?? "rgba(15,23,42,0.62)")},
 ${radiusLine}
-        shadow: ${JSON.stringify(theme.shadow ?? "0 24px 80px rgba(15,23,42,0.14)")},
+        shadow: ${JSON.stringify(theme.shadow ?? "none")},
       }}
     />
   )
@@ -207,9 +207,10 @@ export function EmbedPlayground({
     const border = rgb
       ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${borderAlpha / 100})`
       : "rgba(15, 23, 42, 0.12)"
-    const shadow = rgb
-      ? `0 24px ${shadowSpread}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
-      : "0 24px 80px rgba(15, 23, 42, 0.14)"
+    const shadow =
+      rgb && shadowAlpha > 0
+        ? `0 24px ${shadowSpread}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
+        : "none"
     const background = mixTowardWhite(accentHex, bgTint / 100)
     const muted = rgb
       ? `rgba(${Math.max(0, rgb.r - mutedStrength)}, ${Math.max(0, rgb.g - mutedStrength)}, ${Math.max(0, rgb.b - mutedStrength)}, 0.72)`

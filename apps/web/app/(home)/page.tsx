@@ -61,7 +61,6 @@ export default function HomePage() {
                 accentColor: "#e11d48",
                 borderColor: "rgba(225, 29, 72, 0.18)",
                 radius: 20,
-                shadow: "0 20px 60px rgba(225, 29, 72, 0.12)",
               }}
               url={exampleUrl}
             />
