@@ -1,40 +1,59 @@
-# embed-card monorepo
+# embed-card
 
-A pnpm + Turborepo workspace bootstrapped with `pnpm dlx shadcn@latest init --monorepo`, then extended into a package-focused setup for URL embeds.
+URL embed cards for **YouTube, X, Reddit, Vimeo, Google Maps**, and a link-preview fallback—usable from **React** or as a **web component**. This repo is a **pnpm + Turborepo** monorepo: the publishable package lives in `packages/embed-card`, and `apps/web` is the [live demo and docs](https://1chooo.com/embed-card).
+
+**Requirements:** [Node](https://nodejs.org/) 20+ and [pnpm](https://pnpm.io/) 9 (see `packageManager` in the root `package.json`).
 
 ## Workspace layout
 
 ```txt
-apps/
-  web/   -> Next.js docs site + live demo playground
-packages/
-  embed-card/ -> publishable package
-  ui/         -> shared shadcn/ui components
-examples/     -> framework usage snippets
+apps/web/          Next.js site + interactive playground
+packages/embed-card/   npm package: embed cards + providers
+packages/ui/           Shared shadcn/ui
+examples/              Standalone apps (Next, Vite+React, Vue, Svelte, vanilla)
 ```
 
-## What the package does
+## Install & quick start (React)
 
-`embed-card` exposes:
+```bash
+pnpm add embed-card
+```
 
-- `EmbedCard` for React / Next.js
-- `registerEmbedCard()` for web component usage
-- `resolveEmbed()` and provider helpers for manual rendering
+```tsx
+import { EmbedCard } from "embed-card"
 
-Built-in providers currently include YouTube, X / Twitter, Reddit (JSON thread preview in the browser), Vimeo, Google Maps, plus a link-preview fallback.
+export function Demo() {
+  return <EmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+}
+```
 
-## Commands
+**Other entry points:** `embed-card/manual` (resolve/render without the full card UI), `embed-card/web-component` (custom element + `registerEmbedCard()`). See `packages/embed-card` and [`examples/`](examples/) for more.
+
+## What the package exposes
+
+- `EmbedCard` — styled card for React / Next.js (`"use client"` where needed)
+- `registerEmbedCard()` / custom element — use without React
+- `resolveEmbed()` and provider helpers — built-ins plus custom `EmbedProvider`s
+
+## Monorepo commands
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev        # docs app (web) only
 pnpm build
 pnpm lint
 pnpm typecheck
+pnpm format
 ```
 
-To run a single app:
+Run a single workspace:
 
 ```bash
 pnpm --filter web dev
 ```
+
+Publish the `embed-card` package (maintainers): `pnpm publish:embed-card` from the repo root.
+
+## License
+
+`embed-card` is published under the [MIT License](packages/embed-card/LICENSE).
