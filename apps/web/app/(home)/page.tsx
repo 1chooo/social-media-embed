@@ -3,6 +3,8 @@ import { ArrowRight, BookOpenText, PlayCircle } from "lucide-react"
 
 import { EmbedCard } from "embed-card"
 
+import { EmbedPlayground } from "@/components/embed-playground"
+
 const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 export default function HomePage() {
@@ -31,7 +33,7 @@ export default function HomePage() {
             </Link>
             <Link
               className="inline-flex items-center gap-2 rounded-md border border-fd-border px-4 py-2.5 text-sm text-fd-foreground transition hover:bg-fd-muted/50"
-              href="/docs/playground"
+              href="#playground"
             >
               <PlayCircle className="size-4" />
               Playground
@@ -40,11 +42,19 @@ export default function HomePage() {
           <p className="max-w-lg text-sm leading-6 text-fd-muted-foreground">
             React, web component, and manual rendering paths ship from one
             package. Examples live in the repo under{" "}
-            <code className="text-xs">examples/</code>.
+            <code className="text-xs">examples/</code>. The same playground also
+            lives under{" "}
+            <Link
+              className="font-medium text-fd-foreground underline-offset-2 hover:underline"
+              href="/docs/playground"
+            >
+              /docs/playground
+            </Link>{" "}
+            if you prefer the docs layout.
           </p>
         </div>
 
-        <div className="min-w-0 rounded-lg border border-fd-border bg-fd-background p-5 md:p-6">
+        <div className="min-w-0 rounded-lg p-5 md:p-6">
           <div className="w-full min-w-0">
             <EmbedCard
               theme={{
@@ -57,6 +67,29 @@ export default function HomePage() {
             />
           </div>
         </div>
+      </section>
+
+      <section
+        className="scroll-mt-24 border-t border-fd-border pt-16"
+        id="playground"
+      >
+        <div className="mb-8 max-w-2xl space-y-2">
+          <h2 className="text-2xl font-semibold tracking-tight text-fd-foreground">
+            Playground
+          </h2>
+          <p className="text-sm leading-6 text-fd-muted-foreground">
+            Choose a sample URL and a theme preset—the preview updates right
+            away. Copy the React snippet for your app, or open{" "}
+            <Link
+              className="font-medium text-fd-foreground underline-offset-2 hover:underline"
+              href="/docs/playground"
+            >
+              /docs/playground
+            </Link>{" "}
+            for full slider controls.
+          </p>
+        </div>
+        <EmbedPlayground bleed={false} defaultSnippetOpen={false} mode="simple" />
       </section>
     </main>
   )

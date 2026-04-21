@@ -14,11 +14,11 @@ export default function DocsPlaygroundPage() {
     <DocsPage full>
       <DocsTitle>Playground</DocsTitle>
       <DocsDescription>
-        Paste a URL or pick a sample provider, then tune colors, radius, and
-        chrome. The snippet below reflects your current settings.
+        Paste a URL or pick a sample, then use presets and fine-grained sliders
+        below. The snippet always matches your current settings.
       </DocsDescription>
       <DocsBody>
-        <EmbedPlayground />
+        <EmbedPlayground mode="full" />
       </DocsBody>
     </DocsPage>
   )

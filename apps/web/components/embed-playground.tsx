@@ -1,10 +1,11 @@
 "use client"
 
-import { useMemo, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useState, type ReactNode } from "react"
 
+import type { EmbedCardTheme } from "embed-card"
 import { EmbedCard } from "embed-card"
 
-import { sampleEmbeds } from "@/lib/sample-urls"
+import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const normalized = hex.replace("#", "")
@@ -30,59 +31,187 @@ function mixTowardWhite(
   return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`
 }
 
+function rgbaAlpha(cssColor: string): number | null {
+  const m = cssColor.match(
+    /rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)/i
+  )
+  if (!m?.[1]) return null
+  return Math.round(Number.parseFloat(m[1]) * 100)
+}
+
 function pillClassName(isActive: boolean): string {
   return [
-    "inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-xs font-medium transition",
+    "inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-xs font-medium transition active:scale-[0.98]",
     isActive
       ? "border-fd-primary bg-fd-primary text-fd-primary-foreground"
-      : "border-fd-border bg-fd-background text-fd-foreground hover:bg-fd-muted/60",
+      : "border-fd-border bg-fd-background text-fd-foreground hover:bg-fd-muted/70",
   ].join(" ")
 }
 
 function ControlRow({
   label,
   value,
+  hint,
   children,
 }: {
   label: string
   value: string
+  hint?: string
   children: ReactNode
 }) {
   return (
-    <div className="space-y-2">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-xs font-medium text-fd-muted-foreground">
-          {label}
-        </span>
-        <code className="text-xs tabular-nums text-fd-foreground">{value}</code>
+    <div className="space-y-2.5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <span className="text-xs font-medium text-fd-foreground">{label}</span>
+          {hint ? (
+            <p className="mt-0.5 text-[11px] leading-snug text-fd-muted-foreground">
+              {hint}
+            </p>
+          ) : null}
+        </div>
+        <code className="shrink-0 rounded bg-fd-muted/60 px-1.5 py-0.5 text-[11px] tabular-nums text-fd-foreground">
+          {value}
+        </code>
       </div>
       {children}
     </div>
   )
 }
 
-const rangeClass =
-  "h-1.5 w-full cursor-pointer appearance-none rounded-full bg-fd-muted accent-fd-primary"
+/** Full mode: clear track + fill + larger thumb; transparent native track so fill shows through. */
+function SliderField({
+  min,
+  max,
+  value,
+  onChange,
+  "aria-label": ariaLabel,
+}: {
+  min: number
+  max: number
+  value: number
+  onChange: (v: number) => void
+  "aria-label"?: string
+}) {
+  const pct = ((value - min) / (max - min)) * 100
+  const rangeClass = [
+    "relative z-10 h-9 w-full cursor-pointer appearance-none bg-transparent",
+    "[&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-transparent",
+    "[&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-20 [&::-webkit-slider-thumb]:mt-0 [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:-translate-y-px [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-fd-background [&::-webkit-slider-thumb]:bg-fd-primary [&::-webkit-slider-thumb]:shadow-md",
+    "[&::-moz-range-track]:h-3 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-transparent",
+    "[&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-fd-background [&::-moz-range-thumb]:bg-fd-primary [&::-moz-range-thumb]:shadow-md",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-fd-background",
+  ].join(" ")
 
-export function EmbedPlayground() {
+  return (
+    <div className="relative rounded-full border border-fd-border bg-fd-muted/35 px-3 py-2.5">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 right-4 left-4 h-3 -translate-y-1/2 rounded-full bg-fd-muted/80"
+      >
+        <div
+          className="h-full rounded-l-full bg-fd-primary/45"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <input
+        aria-label={ariaLabel}
+        className={rangeClass}
+        max={max}
+        min={min}
+        onChange={(e) => onChange(Number(e.target.value))}
+        type="range"
+        value={value}
+      />
+    </div>
+  )
+}
+
+const DEFAULTS = {
+  accentHex: "#e11d48",
+  radius: 28,
+  borderAlpha: 22,
+  shadowAlpha: 18,
+  shadowSpread: 72,
+  bgTint: 8,
+  mutedStrength: 40,
+}
+
+function buildSnippet(url: string, theme: EmbedCardTheme): string {
+  const r = theme.radius
+  const radiusLine =
+    typeof r === "number"
+      ? `        radius: ${r},`
+      : `        radius: ${JSON.stringify(r ?? "24px")},`
+
+  return `import { EmbedCard } from "embed-card"
+
+export function Example() {
+  return (
+    <EmbedCard
+      url={${JSON.stringify(url)}}
+      theme={{
+        accentColor: ${JSON.stringify(theme.accentColor ?? "#111827")},
+        background: ${JSON.stringify(theme.background ?? "rgba(255,255,255,0.98)")},
+        borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
+        mutedColor: ${JSON.stringify(theme.mutedColor ?? "rgba(15,23,42,0.62)")},
+${radiusLine}
+        shadow: ${JSON.stringify(theme.shadow ?? "0 24px 80px rgba(15,23,42,0.14)")},
+      }}
+    />
+  )
+}`
+}
+
+export type EmbedPlaygroundProps = {
+  /** Negative margin for full-bleed inside docs prose (default: true). */
+  bleed?: boolean
+  /** Whether the code snippet starts expanded (full mode toggle only). */
+  defaultSnippetOpen?: boolean
+  /** `simple`: URL + presets + snippet. `full`: adds fine-tune sliders (docs page). */
+  mode?: "simple" | "full"
+}
+
+export function EmbedPlayground({
+  bleed = true,
+  defaultSnippetOpen = true,
+  mode = "full",
+}: EmbedPlaygroundProps) {
+  const isFull = mode === "full"
+
   const [url, setUrl] = useState<string>(sampleEmbeds[0].url)
-  const [accentHex, setAccentHex] = useState("#e11d48")
-  const [radius, setRadius] = useState(28)
-  const [borderAlpha, setBorderAlpha] = useState(22)
-  const [shadowAlpha, setShadowAlpha] = useState(18)
-  const [bgTint, setBgTint] = useState(8)
+  const [simplePresetId, setSimplePresetId] = useState<
+    (typeof demoThemes)[number]["id"]
+  >(demoThemes[0].id)
 
-  const theme = useMemo(() => {
+  const [accentHex, setAccentHex] = useState(DEFAULTS.accentHex)
+  const [radius, setRadius] = useState(DEFAULTS.radius)
+  const [borderAlpha, setBorderAlpha] = useState(DEFAULTS.borderAlpha)
+  const [shadowAlpha, setShadowAlpha] = useState(DEFAULTS.shadowAlpha)
+  const [shadowSpread, setShadowSpread] = useState(DEFAULTS.shadowSpread)
+  const [bgTint, setBgTint] = useState(DEFAULTS.bgTint)
+  const [mutedStrength, setMutedStrength] = useState(DEFAULTS.mutedStrength)
+  const [activePresetId, setActivePresetId] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
+
+  const simpleTheme = useMemo((): EmbedCardTheme => {
+    const entry =
+      demoThemes.find((d) => d.id === simplePresetId) ?? demoThemes[0]
+    return { ...entry.theme }
+  }, [simplePresetId])
+
+  const fullTheme = useMemo(() => {
     const rgb = hexToRgb(accentHex)
     const border = rgb
       ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${borderAlpha / 100})`
       : "rgba(15, 23, 42, 0.12)"
     const shadow = rgb
-      ? `0 24px 72px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
+      ? `0 24px ${shadowSpread}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
       : "0 24px 80px rgba(15, 23, 42, 0.14)"
     const background = mixTowardWhite(accentHex, bgTint / 100)
     const muted = rgb
-      ? `rgba(${Math.max(0, rgb.r - 40)}, ${Math.max(0, rgb.g - 40)}, ${Math.max(0, rgb.b - 40)}, 0.65)`
+      ? `rgba(${Math.max(0, rgb.r - mutedStrength)}, ${Math.max(0, rgb.g - mutedStrength)}, ${Math.max(0, rgb.b - mutedStrength)}, 0.72)`
       : "rgba(15, 23, 42, 0.62)"
 
     return {
@@ -93,126 +222,361 @@ export function EmbedPlayground() {
       radius,
       shadow,
     }
-  }, [accentHex, radius, borderAlpha, shadowAlpha, bgTint])
+  }, [
+    accentHex,
+    radius,
+    borderAlpha,
+    shadowAlpha,
+    shadowSpread,
+    bgTint,
+    mutedStrength,
+  ])
 
-  const snippet = `import { EmbedCard } from "embed-card"
+  const cardTheme = isFull ? fullTheme : simpleTheme
 
-export function Example() {
-  return (
-    <EmbedCard
-      url="${url}"
-      theme={{
-        accentColor: "${theme.accentColor}",
-        background: "${theme.background}",
-        borderColor: "${theme.borderColor}",
-        mutedColor: "${theme.mutedColor}",
-        radius: ${radius},
-        shadow: "${theme.shadow}",
-      }}
-    />
+  const snippet = useMemo(
+    () => buildSnippet(url, cardTheme),
+    [url, cardTheme]
   )
-}`
+
+  const copySnippet = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(snippet)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
+  }, [snippet])
+
+  const resetFull = useCallback(() => {
+    setAccentHex(DEFAULTS.accentHex)
+    setRadius(DEFAULTS.radius)
+    setBorderAlpha(DEFAULTS.borderAlpha)
+    setShadowAlpha(DEFAULTS.shadowAlpha)
+    setShadowSpread(DEFAULTS.shadowSpread)
+    setBgTint(DEFAULTS.bgTint)
+    setMutedStrength(DEFAULTS.mutedStrength)
+    setUrl(sampleEmbeds[0].url)
+    setActivePresetId(null)
+  }, [])
+
+  const resetSimple = useCallback(() => {
+    setUrl(sampleEmbeds[0].url)
+    setSimplePresetId(demoThemes[0].id)
+  }, [])
+
+  const applyDemoPresetFull = useCallback(
+    (id: (typeof demoThemes)[number]["id"]) => {
+      const entry = demoThemes.find((d) => d.id === id)
+      if (!entry) return
+      const { theme: t } = entry
+      setAccentHex(t.accentColor)
+      setRadius(typeof t.radius === "number" ? t.radius : DEFAULTS.radius)
+      const ba = rgbaAlpha(t.borderColor)
+      setBorderAlpha(ba ?? DEFAULTS.borderAlpha)
+      const sa = rgbaAlpha(t.shadow)
+      setShadowAlpha(sa ?? DEFAULTS.shadowAlpha)
+      const blurMatch = t.shadow.match(/0\s+[\d.]+px\s+(\d+)px\s+rgba/i)
+      if (blurMatch?.[1])
+        setShadowSpread(Number.parseInt(blurMatch[1], 10))
+      setActivePresetId(id)
+    },
+    []
+  )
+
+  const outerClass = [
+    "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-lg",
+    bleed ? "-mx-4 lg:-mx-6" : "overflow-hidden rounded-xl shadow-sm",
+  ].join(" ")
 
   return (
-    <div className="not-prose -mx-4 flex min-h-0 min-w-0 flex-col border border-fd-border lg:-mx-6 lg:flex-row lg:rounded-lg">
-      <div className="relative flex min-h-[320px] flex-1 items-center justify-center bg-fd-muted/20 p-6 lg:min-h-[480px] lg:p-10">
-        <div className="relative w-full max-w-xl min-w-0">
-          <EmbedCard theme={theme} url={url} />
+    <div className={outerClass}>
+      {/* Preview: stacked layout, no absolute label (avoids overlap in docs). */}
+      <div className="flex min-h-[280px] flex-1 flex-col bg-linear-to-b from-fd-muted/30 to-fd-muted/10 lg:min-h-[min(520px,calc(100dvh-16rem))]">
+        <div className="shrink-0 px-6 pt-6 pb-2 lg:px-10 lg:pt-8">
+          <p className="text-[11px] font-medium tracking-wide text-fd-muted-foreground uppercase">
+            Preview
+          </p>
+        </div>
+        <div className="flex flex-1 flex-col items-center justify-center px-6 pb-8 lg:px-10">
+          <div className="relative w-full max-w-xl min-w-0">
+            <div className="rounded-lg">
+              <EmbedCard theme={cardTheme} url={url} />
+            </div>
+          </div>
         </div>
       </div>
 
-      <aside className="flex w-full shrink-0 flex-col gap-8 border-t border-fd-border bg-fd-background p-6 lg:w-[min(100%,380px)] lg:border-t-0 lg:border-l">
-        <div>
-          <p className="text-xs font-medium text-fd-muted-foreground">
-            Embed URL
-          </p>
-          <input
-            className="mt-2 h-10 w-full rounded-md border border-fd-border bg-fd-background px-3 font-mono text-xs outline-none ring-fd-primary focus-visible:ring-2"
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://..."
-            spellCheck={false}
-            value={url}
-          />
-          <div className="mt-3 flex flex-wrap gap-2">
-            {sampleEmbeds.map((sample) => (
+      <aside
+        className={[
+          "flex w-full shrink-0 flex-col gap-0 border-t border-fd-border bg-fd-background lg:w-[min(100%,400px)] lg:border-t-0 lg:border-l lg:overflow-y-auto lg:self-start",
+          isFull
+            ? "lg:max-h-[min(720px,calc(100dvh-8rem))] lg:sticky lg:top-28"
+            : "",
+        ].join(" ")}
+      >
+        {isFull ? (
+          <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
+            <span className="text-xs font-semibold text-fd-foreground">
+              Controls
+            </span>
+            <div className="flex shrink-0 gap-2">
               <button
-                className={pillClassName(sample.url === url)}
-                key={sample.label}
-                onClick={() => setUrl(sample.url)}
+                className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+                onClick={resetFull}
                 type="button"
               >
-                {sample.label}
+                Reset
               </button>
-            ))}
+              <button
+                className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
+                onClick={copySnippet}
+                type="button"
+              >
+                {copied ? "Copied" : "Copy code"}
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
+            <span className="text-xs font-semibold text-fd-foreground">
+              Options
+            </span>
+            <div className="flex shrink-0 gap-2">
+              <button
+                className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+                onClick={resetSimple}
+                type="button"
+              >
+                Reset
+              </button>
+              <button
+                className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
+                onClick={copySnippet}
+                type="button"
+              >
+                {copied ? "Copied" : "Copy code"}
+              </button>
+            </div>
+          </div>
+        )}
 
-        <div className="space-y-6">
-          <ControlRow label="accent" value={accentHex}>
-            <input
-              className="h-9 w-full max-w-[200px] cursor-pointer rounded border border-fd-border bg-fd-background p-1"
-              onChange={(e) => setAccentHex(e.target.value)}
-              type="color"
-              value={accentHex}
-            />
-          </ControlRow>
+        <div className="space-y-8 px-4 py-6 sm:px-5">
+          <div>
+            <p className="text-xs font-semibold text-fd-foreground">Source</p>
+            <label className="mt-3 block text-[11px] font-medium text-fd-muted-foreground">
+              URL
+              <input
+                className="mt-1.5 h-10 w-full rounded-md border border-fd-border bg-fd-background px-3 font-mono text-xs text-fd-foreground outline-none transition placeholder:text-fd-muted-foreground focus-visible:border-fd-primary focus-visible:ring-2 focus-visible:ring-fd-primary/25"
+                onChange={(e) => {
+                  setUrl(e.target.value)
+                  if (isFull) setActivePresetId(null)
+                }}
+                placeholder="https://..."
+                spellCheck={false}
+                value={url}
+              />
+            </label>
+            <p className="mt-3 text-[11px] font-medium text-fd-muted-foreground">
+              Samples
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {sampleEmbeds.map((sample) => (
+                <button
+                  className={pillClassName(sample.url === url)}
+                  key={sample.label}
+                  onClick={() => {
+                    setUrl(sample.url)
+                    if (isFull) setActivePresetId(null)
+                  }}
+                  type="button"
+                >
+                  {sample.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          <ControlRow label="radius" value={`${radius}px`}>
-            <input
-              className={rangeClass}
-              max={48}
-              min={8}
-              onChange={(e) => setRadius(Number(e.target.value))}
-              type="range"
-              value={radius}
-            />
-          </ControlRow>
+          <div>
+            <p className="text-xs font-semibold text-fd-foreground">
+              Theme presets
+            </p>
+            <p className="mt-1 text-[11px] text-fd-muted-foreground">
+              {isFull
+                ? "Jump to a palette, then fine-tune with the sliders below."
+                : "Pick a ready-made card theme."}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {demoThemes.map((preset) => (
+                <button
+                  className={pillClassName(
+                    isFull
+                      ? activePresetId === preset.id
+                      : simplePresetId === preset.id
+                  )}
+                  key={preset.id}
+                  onClick={() => {
+                    if (isFull) applyDemoPresetFull(preset.id)
+                    else setSimplePresetId(preset.id)
+                  }}
+                  type="button"
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          <ControlRow
-            label="borderAlpha"
-            value={(borderAlpha / 100).toFixed(2)}
-          >
-            <input
-              className={rangeClass}
-              max={60}
-              min={4}
-              onChange={(e) => setBorderAlpha(Number(e.target.value))}
-              type="range"
-              value={borderAlpha}
-            />
-          </ControlRow>
+          {isFull ? (
+            <div className="space-y-7 border-t border-fd-border pt-8">
+              <p className="text-xs font-semibold text-fd-foreground">
+                Fine-tune
+              </p>
 
-          <ControlRow
-            label="shadowAlpha"
-            value={(shadowAlpha / 100).toFixed(2)}
-          >
-            <input
-              className={rangeClass}
-              max={45}
-              min={0}
-              onChange={(e) => setShadowAlpha(Number(e.target.value))}
-              type="range"
-              value={shadowAlpha}
-            />
-          </ControlRow>
+              <ControlRow label="Accent" value={accentHex} hint="Picker + presets above.">
+                <input
+                  aria-label="Accent color"
+                  className="h-10 w-full max-w-[220px] cursor-pointer rounded-md border border-fd-border bg-fd-background p-1"
+                  onChange={(e) => {
+                    setAccentHex(e.target.value)
+                    setActivePresetId(null)
+                  }}
+                  type="color"
+                  value={accentHex}
+                />
+              </ControlRow>
 
-          <ControlRow label="bgTint" value={(bgTint / 100).toFixed(2)}>
-            <input
-              className={rangeClass}
-              max={28}
-              min={0}
-              onChange={(e) => setBgTint(Number(e.target.value))}
-              type="range"
-              value={bgTint}
-            />
-          </ControlRow>
-        </div>
+              <ControlRow label="Radius" value={`${radius}px`} hint="Card corner radius.">
+                <SliderField
+                  aria-label="Radius"
+                  max={48}
+                  min={8}
+                  onChange={(v) => {
+                    setRadius(v)
+                    setActivePresetId(null)
+                  }}
+                  value={radius}
+                />
+              </ControlRow>
 
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-fd-muted-foreground">Snippet</p>
-          <pre className="mt-2 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/40 p-3 text-[11px] leading-relaxed text-fd-foreground">
-            <code>{snippet}</code>
-          </pre>
+              <ControlRow
+                label="Border blend"
+                value={(borderAlpha / 100).toFixed(2)}
+                hint="Accent mixed into the border."
+              >
+                <SliderField
+                  aria-label="Border blend"
+                  max={60}
+                  min={4}
+                  onChange={(v) => {
+                    setBorderAlpha(v)
+                    setActivePresetId(null)
+                  }}
+                  value={borderAlpha}
+                />
+              </ControlRow>
+
+              <ControlRow
+                label="Shadow depth"
+                value={(shadowAlpha / 100).toFixed(2)}
+                hint="Glow strength under the card."
+              >
+                <SliderField
+                  aria-label="Shadow depth"
+                  max={45}
+                  min={0}
+                  onChange={(v) => {
+                    setShadowAlpha(v)
+                    setActivePresetId(null)
+                  }}
+                  value={shadowAlpha}
+                />
+              </ControlRow>
+
+              <ControlRow
+                label="Shadow reach"
+                value={`${shadowSpread}px`}
+                hint="How far the shadow spreads."
+              >
+                <SliderField
+                  aria-label="Shadow reach"
+                  max={120}
+                  min={32}
+                  onChange={(v) => {
+                    setShadowSpread(v)
+                    setActivePresetId(null)
+                  }}
+                  value={shadowSpread}
+                />
+              </ControlRow>
+
+              <ControlRow
+                label="Surface tint"
+                value={(bgTint / 100).toFixed(2)}
+                hint="Pull the card surface toward the accent."
+              >
+                <SliderField
+                  aria-label="Surface tint"
+                  max={28}
+                  min={0}
+                  onChange={(v) => {
+                    setBgTint(v)
+                    setActivePresetId(null)
+                  }}
+                  value={bgTint}
+                />
+              </ControlRow>
+
+              <ControlRow
+                label="Muted text"
+                value={String(mutedStrength)}
+                hint="How much the body text leans away from the accent."
+              >
+                <SliderField
+                  aria-label="Muted text strength"
+                  max={80}
+                  min={12}
+                  onChange={(v) => {
+                    setMutedStrength(v)
+                    setActivePresetId(null)
+                  }}
+                  value={mutedStrength}
+                />
+              </ControlRow>
+            </div>
+          ) : null}
+
+          <div className="border-t border-fd-border pt-6">
+            {isFull ? (
+              <>
+                <button
+                  className="flex w-full items-center justify-between gap-2 rounded-md py-1 text-left text-xs font-semibold text-fd-foreground transition hover:text-fd-primary"
+                  onClick={() => setSnippetOpen((o) => !o)}
+                  type="button"
+                >
+                  <span>React snippet</span>
+                  <span className="text-[11px] font-normal text-fd-muted-foreground">
+                    {snippetOpen ? "Hide" : "Show"}
+                  </span>
+                </button>
+                {snippetOpen ? (
+                  <pre className="mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
+                    <code>{snippet}</code>
+                  </pre>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-semibold text-fd-foreground">
+                  React snippet
+                </p>
+                <pre className="mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
+                  <code>{snippet}</code>
+                </pre>
+              </>
+            )}
+          </div>
         </div>
       </aside>
     </div>
