@@ -5,10 +5,6 @@
 @source "../**/*.{ts,tsx,mdx}";
 @source "../content/**/*.{md,mdx}";
 
-:root {
-  --brand-glow: rgba(244, 63, 94, 0.18);
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -17,15 +13,9 @@ body {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background:
-    radial-gradient(circle at top left, var(--brand-glow), transparent 28%),
-    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 22%),
-    oklch(0.99 0.003 95.43);
+  background: oklch(0.985 0.004 95);
 }
 
 .dark body {
-  background:
-    radial-gradient(circle at top left, rgba(244, 63, 94, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 22%),
-    oklch(0.17 0.01 260);
+  background: oklch(0.18 0.012 260);
 }
