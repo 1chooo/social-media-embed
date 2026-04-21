@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "embed-card": "workspace:*",
+    "embed-card": "0.1.2",
     "fumadocs-core": "latest",
     "fumadocs-mdx": "latest",
     "fumadocs-ui": "latest",

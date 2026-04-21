@@ -30,8 +30,8 @@ importers:
   apps/web:
     dependencies:
       embed-card:
-        specifier: workspace:*
-        version: link:../../packages/embed-card
+        specifier: 0.1.2
+        version: 0.1.2(react@19.2.4)
       fumadocs-core:
         specifier: latest
         version: 16.7.16(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.4)(@types/mdast@4.0.4)(@types/react@19.2.14)(lucide-react@1.8.0(react@19.2.4))(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@4.3.6)
@@ -54,6 +54,12 @@ importers:
         specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@1chooo/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@1chooo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -69,12 +75,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      '@1chooo/eslint-config':
-        specifier: workspace:^
-        version: link:../../packages/eslint-config
-      '@1chooo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
@@ -91,15 +91,15 @@ importers:
         specifier: ^18.3.0 || ^19.0.0
         version: 19.2.4
     devDependencies:
-      '@types/react':
-        specifier: ^19.2.10
-        version: 19.2.14
       '@1chooo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
       '@1chooo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/react':
+        specifier: ^19.2.10
+        version: 19.2.14
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
@@ -187,6 +187,12 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
+      '@1chooo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@1chooo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -202,12 +208,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      '@1chooo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@1chooo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
@@ -2418,6 +2418,14 @@ packages:
 
   electron-to-chromium@1.5.286:
     resolution: {integrity: sha512-9tfDXhJ4RKFNerfjdCcZfufu49vg620741MNs26a9+bhLThdB+plgMeou98CAaHu/WATj2iHOOHTp1hWtABj2A==}
+
+  embed-card@0.1.2:
+    resolution: {integrity: sha512-otBs6PDoVsjW83GhNvioZGl4BdoO1tN9TfCo74joUIB1UJ/uogfFraUOtXArcCjYTytLyVZMg3uHYkRtCs/CFg==}
+    peerDependencies:
+      react: ^18.3.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
@@ -7100,6 +7108,10 @@ snapshots:
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.286: {}
+
+  embed-card@0.1.2(react@19.2.4):
+    optionalDependencies:
+      react: 19.2.4
 
   emoji-regex@10.6.0: {}
 
