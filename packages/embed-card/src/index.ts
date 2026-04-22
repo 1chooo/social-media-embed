@@ -1,4 +1,5 @@
 export { EmbedCard } from "./embed-card"
+export type { EmbedCardProps } from "./embed-card"
 export {
   decodeRedditHtmlEntities,
   fetchRedditPost,
