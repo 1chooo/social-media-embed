@@ -34,7 +34,9 @@ export function resolveEmbed(
       continue
     }
 
-    const resolved = provider.resolve(url)
+    const resolved = provider.resolve(url, {
+      appearance: options.appearance,
+    })
 
     if (resolved) {
       return resolved

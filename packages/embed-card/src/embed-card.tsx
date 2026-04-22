@@ -82,8 +82,8 @@ export function EmbedCard({
     getServerDark
   )
 
-  const resolved = resolveEmbed(url, { providers })
   const resolvedMode = resolveEmbedCardAppearance(theme?.appearance, systemPrefersDark)
+  const resolved = resolveEmbed(url, { providers, appearance: resolvedMode })
 
   const themeVars = createThemeVariables(
     { accentColor: resolved.accentColor, ...theme },

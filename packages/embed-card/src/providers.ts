@@ -1,4 +1,4 @@
-import type { EmbedProvider, ResolvedEmbed } from "./types"
+import type { EmbedProvider, ResolvedEmbed, ResolveEmbedContext } from "./types"
 
 function getDisplayUrl(url: URL): string {
   const pathname = url.pathname === "/" ? "" : url.pathname.replace(/\/$/, "")
@@ -105,7 +105,7 @@ const youtubeProvider: EmbedProvider = {
     ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"].includes(
       url.hostname
     ),
-  resolve: (url) => {
+  resolve: (url, _context?: ResolveEmbedContext) => {
     const videoId = extractYouTubeId(url)
 
     if (!videoId) {
@@ -134,12 +134,17 @@ const twitterProvider: EmbedProvider = {
   label: "X / Twitter",
   accentColor: "#111827",
   match: (url) => ["x.com", "twitter.com", "www.twitter.com"].includes(url.hostname),
-  resolve: (url) => {
+  resolve: (url, context?: ResolveEmbedContext) => {
     const statusId = extractStatusId(url)
 
     if (!statusId) {
       return null
     }
+
+    const tweetSrc = new URL("https://platform.twitter.com/embed/Tweet.html")
+    tweetSrc.searchParams.set("id", statusId)
+    tweetSrc.searchParams.set("dnt", "true")
+    tweetSrc.searchParams.set("theme", context?.appearance === "dark" ? "dark" : "light")
 
     return createResolvedEmbed(url, twitterProvider, {
       title: "Social post",
@@ -147,7 +152,7 @@ const twitterProvider: EmbedProvider = {
         "Official tweet embeds rendered inside a responsive frame, ready for app and docs previews.",
       renderer: {
         type: "iframe",
-        src: `https://platform.twitter.com/embed/Tweet.html?id=${statusId}&dnt=true`,
+        src: tweetSrc.toString(),
         title: "Embedded X post",
         aspectRatio: "1 / 1",
         minHeight: 480,
@@ -163,7 +168,7 @@ const redditProvider: EmbedProvider = {
   accentColor: "#ff4500",
   match: (url) =>
     ["reddit.com", "www.reddit.com", "old.reddit.com"].includes(url.hostname),
-  resolve: (url) => {
+  resolve: (url, _context?: ResolveEmbedContext) => {
     if (!url.pathname.includes("/comments/")) {
       return null
     }
@@ -189,7 +194,7 @@ const googleMapsProvider: EmbedProvider = {
   match: (url) =>
     ["google.com", "www.google.com", "maps.google.com"].includes(url.hostname) &&
     url.pathname.startsWith("/maps"),
-  resolve: (url) => {
+  resolve: (url, _context?: ResolveEmbedContext) => {
     const embedUrl = new URL(url.toString())
     embedUrl.searchParams.set("output", "embed")
 
@@ -215,7 +220,7 @@ const vimeoProvider: EmbedProvider = {
   label: "Vimeo",
   accentColor: "#00adef",
   match: (url) => ["vimeo.com", "www.vimeo.com", "player.vimeo.com"].includes(url.hostname),
-  resolve: (url) => {
+  resolve: (url, _context?: ResolveEmbedContext) => {
     const videoId = extractVimeoId(url)
 
     if (!videoId) {

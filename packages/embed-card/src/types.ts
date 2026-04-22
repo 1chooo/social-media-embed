@@ -78,10 +78,15 @@ export interface EmbedProvider {
   label: string
   accentColor: string
   match: (url: URL) => boolean
-  resolve: (url: URL) => ResolvedEmbed | null
+  resolve: (url: URL, context?: ResolveEmbedContext) => ResolvedEmbed | null
 }
 
-export interface ResolveEmbedOptions {
+/** Passed into {@link EmbedProvider.resolve} so iframe URLs can match the card (e.g. X `theme`). */
+export interface ResolveEmbedContext {
+  appearance?: "light" | "dark"
+}
+
+export interface ResolveEmbedOptions extends ResolveEmbedContext {
   providers?: readonly EmbedProvider[]
   includeFallback?: boolean
 }

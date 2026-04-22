@@ -189,7 +189,6 @@ export class EmbedCardElement extends HTMLElement {
     }
 
     const url = this.getAttribute("url") ?? ""
-    const resolved = resolveEmbed(url)
     const theme = getThemeFromAttributes(this)
     const resolvedMode = resolveEmbedCardAppearance(
       theme.appearance,
@@ -197,6 +196,7 @@ export class EmbedCardElement extends HTMLElement {
         ? window.matchMedia("(prefers-color-scheme: dark)").matches
         : false
     )
+    const resolved = resolveEmbed(url, { appearance: resolvedMode })
     const variables = createThemeVariables(
       { accentColor: resolved.accentColor, ...theme },
       resolvedMode

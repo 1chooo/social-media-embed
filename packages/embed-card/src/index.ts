@@ -26,5 +26,6 @@ export type {
   EmbedRenderer,
   RedditClientEmbedRenderer,
   ResolvedEmbed,
+  ResolveEmbedContext,
   ResolveEmbedOptions,
 } from "./types"
