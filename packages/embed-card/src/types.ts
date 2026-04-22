@@ -19,6 +19,13 @@ export interface EmbedCardTheme {
   shadow?: string
   /** Any valid CSS `font-family` value. Defaults to system-ui sans-serif stack. */
   fontFamily?: string
+  /**
+   * Controls chrome surface colors (gradients, preview panel, borders).
+   * - `"light"` — always use the default light palette (default when omitted).
+   * - `"dark"`  — always use a dark palette.
+   * - `"system"` — follow `prefers-color-scheme` at runtime; falls back to light on SSR.
+   */
+  appearance?: "light" | "dark" | "system"
 }
 
 export interface IframeEmbedRenderer {

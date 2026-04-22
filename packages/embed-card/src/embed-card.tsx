@@ -1,10 +1,11 @@
 "use client"
 
 import type { CSSProperties, HTMLAttributes } from "react"
+import { useSyncExternalStore } from "react"
 
 import { RedditEmbedPreview } from "./reddit-embed"
 import { resolveEmbed } from "./resolve"
-import { createThemeVariables } from "./theme"
+import { createThemeVariables, resolveEmbedCardAppearance } from "./theme"
 import type { EmbedCardTheme, EmbedProvider } from "./types"
 
 export interface EmbedCardProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,7 +19,24 @@ function cx(...values: Array<string | undefined>): string {
   return values.filter(Boolean).join(" ")
 }
 
-const rootStyle: CSSProperties = {
+// Subscriptions for prefers-color-scheme (shared across component instances).
+function subscribeToColorScheme(cb: () => void): () => void {
+  if (typeof window === "undefined") return () => {}
+  const mq = window.matchMedia("(prefers-color-scheme: dark)")
+  mq.addEventListener("change", cb)
+  return () => mq.removeEventListener("change", cb)
+}
+
+function getSystemDark(): boolean {
+  if (typeof window === "undefined") return false
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+}
+
+function getServerDark(): boolean {
+  return false
+}
+
+const rootStyleBase: CSSProperties = {
   boxSizing: "border-box",
   width: "100%",
   maxWidth: "100%",
@@ -29,22 +47,22 @@ const rootStyle: CSSProperties = {
   borderRadius: "var(--embed-card-radius)",
   border: "1px solid var(--embed-card-border)",
   background:
-    "linear-gradient(160deg, color-mix(in srgb, var(--embed-card-background) 94%, white 6%), var(--embed-card-background))",
+    "linear-gradient(160deg, color-mix(in srgb, var(--embed-card-background) 94%, var(--embed-card-chrome-tint) 6%), var(--embed-card-background))",
   color: "var(--embed-card-text)",
   boxShadow: "var(--embed-card-shadow)",
   backdropFilter: "blur(18px)",
 }
 
-const previewStyle: CSSProperties = {
+const previewStyleBase: CSSProperties = {
   position: "relative",
   overflow: "hidden",
   width: "100%",
   maxWidth: "100%",
   minWidth: 0,
   borderRadius: "calc(var(--embed-card-radius) - 8px)",
-  border: "1px solid color-mix(in srgb, var(--embed-card-border) 82%, white 18%)",
+  border: "1px solid color-mix(in srgb, var(--embed-card-border) 82%, var(--embed-card-chrome-tint) 18%)",
   background:
-    "radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, white 78%), transparent 58%), #ffffff",
+    "radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, var(--embed-card-chrome-tint) 78%), transparent 58%), var(--embed-card-preview-canvas)",
 }
 
 const iframeStyle: CSSProperties = {
@@ -74,16 +92,24 @@ export function EmbedCard({
   style,
   ...props
 }: EmbedCardProps) {
+  const systemPrefersDark = useSyncExternalStore(
+    theme?.appearance === "system" ? subscribeToColorScheme : (_cb: () => void) => () => {},
+    theme?.appearance === "system" ? getSystemDark : getServerDark,
+    getServerDark
+  )
+
   const resolved = resolveEmbed(url, { providers })
-  const isRedditClient = resolved.renderer.type === "reddit_client"
-  const themeVars = createThemeVariables({
-    accentColor: resolved.accentColor,
-    ...theme,
-  })
+  const resolvedMode = resolveEmbedCardAppearance(theme?.appearance, systemPrefersDark)
+
+  const themeVars = createThemeVariables(
+    { accentColor: resolved.accentColor, ...theme },
+    resolvedMode
+  )
 
   const combinedStyle = {
     ...themeVars,
-    ...rootStyle,
+    ...rootStyleBase,
+    colorScheme: resolvedMode,
     ...style,
   } as CSSProperties
 
@@ -122,7 +148,7 @@ export function EmbedCard({
           >
             {resolved.providerLabel}
           </span>
-          {!isRedditClient ? (
+          {resolved.renderer.type !== "reddit_client" ? (
             <h3
               style={{
                 margin: 0,
@@ -143,8 +169,8 @@ export function EmbedCard({
             justifyContent: "center",
             flexShrink: 0,
             borderRadius: "999px",
-            border: "1px solid color-mix(in srgb, var(--embed-card-accent) 24%, white 76%)",
-            background: "color-mix(in srgb, var(--embed-card-accent) 12%, white 88%)",
+            border: "1px solid color-mix(in srgb, var(--embed-card-accent) 24%, var(--embed-card-chrome-tint) 76%)",
+            background: "color-mix(in srgb, var(--embed-card-accent) 12%, var(--embed-card-chrome-tint) 88%)",
             color: "var(--embed-card-accent)",
             padding: "0.35rem 0.7rem",
             fontSize: "0.78rem",
@@ -156,7 +182,7 @@ export function EmbedCard({
         </span>
       </header>
 
-      {!isRedditClient ? (
+      {resolved.renderer.type !== "reddit_client" ? (
         <p
           style={{
             margin: 0,
@@ -173,7 +199,7 @@ export function EmbedCard({
       {resolved.renderer.type === "iframe" ? (
         <div
           style={{
-            ...previewStyle,
+            ...previewStyleBase,
             aspectRatio: resolved.renderer.aspectRatio ?? "16 / 9",
             minHeight: resolved.renderer.minHeight
               ? `min(${resolved.renderer.minHeight}px, 90vmin)`
@@ -196,10 +222,10 @@ export function EmbedCard({
       {resolved.renderer.type === "reddit_client" ? (
         <div
           style={{
-            ...previewStyle,
+            ...previewStyleBase,
             minHeight: "280px",
             padding: 0,
-            background: "#ffffff",
+            background: "var(--embed-card-preview-canvas)",
           }}
         >
           <RedditEmbedPreview key={resolved.renderer.postUrl} postUrl={resolved.renderer.postUrl} />
@@ -211,7 +237,7 @@ export function EmbedCard({
           href={resolved.renderer.href}
           rel="noreferrer"
           style={{
-            ...previewStyle,
+            ...previewStyleBase,
             display: "grid",
             gap: "0.75rem",
             padding: "1rem",
@@ -240,7 +266,7 @@ export function EmbedCard({
       ) : null}
 
       {resolved.renderer.type === "invalid" ? (
-        <div style={{ ...previewStyle, ...invalidStyle }}>{resolved.renderer.message}</div>
+        <div style={{ ...previewStyleBase, ...invalidStyle }}>{resolved.renderer.message}</div>
       ) : null}
 
       <footer
@@ -250,7 +276,7 @@ export function EmbedCard({
           gap: "0.75rem",
           alignItems: "center",
           justifyContent: "space-between",
-          borderTop: "1px solid color-mix(in srgb, var(--embed-card-border) 80%, white 20%)",
+          borderTop: "1px solid color-mix(in srgb, var(--embed-card-border) 80%, var(--embed-card-chrome-tint) 20%)",
           paddingTop: "0.9rem",
           minWidth: 0,
         }}

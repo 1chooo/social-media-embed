@@ -1,7 +1,11 @@
 import { fetchRedditPost } from "./reddit-data"
 import { buildRedditCardElement } from "./reddit-shadow-dom"
 import { resolveEmbed } from "./resolve"
-import { createThemeVariables, variablesToInlineStyle } from "./theme"
+import {
+  createThemeVariables,
+  resolveEmbedCardAppearance,
+  variablesToInlineStyle,
+} from "./theme"
 import type { EmbedCardTheme, ResolvedEmbed } from "./types"
 
 function escapeHtml(value: string): string {
@@ -25,7 +29,7 @@ const componentStyles = `
     padding: 1.25rem;
     border-radius: var(--embed-card-radius);
     border: 1px solid var(--embed-card-border);
-    background: linear-gradient(160deg, color-mix(in srgb, var(--embed-card-background) 94%, white 6%), var(--embed-card-background));
+    background: linear-gradient(160deg, color-mix(in srgb, var(--embed-card-background) 94%, var(--embed-card-chrome-tint) 6%), var(--embed-card-background));
     color: var(--embed-card-text);
     box-shadow: var(--embed-card-shadow);
     backdrop-filter: blur(18px);
@@ -73,8 +77,8 @@ const componentStyles = `
     justify-content: center;
     padding: 0.35rem 0.7rem;
     border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--embed-card-accent) 24%, white 76%);
-    background: color-mix(in srgb, var(--embed-card-accent) 12%, white 88%);
+    border: 1px solid color-mix(in srgb, var(--embed-card-accent) 24%, var(--embed-card-chrome-tint) 76%);
+    background: color-mix(in srgb, var(--embed-card-accent) 12%, var(--embed-card-chrome-tint) 88%);
     color: var(--embed-card-accent);
     font-size: 0.78rem;
     font-weight: 700;
@@ -95,8 +99,8 @@ const componentStyles = `
     max-width: 100%;
     min-width: 0;
     border-radius: calc(var(--embed-card-radius) - 8px);
-    border: 1px solid color-mix(in srgb, var(--embed-card-border) 82%, white 18%);
-    background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, white 78%), transparent 58%), #ffffff;
+    border: 1px solid color-mix(in srgb, var(--embed-card-border) 82%, var(--embed-card-chrome-tint) 18%);
+    background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, var(--embed-card-chrome-tint) 78%), transparent 58%), var(--embed-card-preview-canvas);
   }
 
   iframe {
@@ -130,7 +134,7 @@ const componentStyles = `
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    border-top: 1px solid color-mix(in srgb, var(--embed-card-border) 80%, white 20%);
+    border-top: 1px solid color-mix(in srgb, var(--embed-card-border) 80%, var(--embed-card-chrome-tint) 20%);
     padding-top: 0.9rem;
   }
 
@@ -142,6 +146,11 @@ const componentStyles = `
 `
 
 function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
+  const rawAppearance = element.getAttribute("appearance")
+  const appearance =
+    rawAppearance === "dark" || rawAppearance === "light" || rawAppearance === "system"
+      ? rawAppearance
+      : undefined
   return {
     accentColor: element.getAttribute("accent-color") ?? undefined,
     background: element.getAttribute("background") ?? undefined,
@@ -150,6 +159,7 @@ function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
     mutedColor: element.getAttribute("muted-color") ?? undefined,
     radius: element.getAttribute("radius") ?? undefined,
     shadow: element.getAttribute("shadow") ?? undefined,
+    appearance,
   }
 }
 
@@ -191,7 +201,7 @@ function renderPreview(resolved: ResolvedEmbed): string {
 
   if (resolved.renderer.type === "reddit_client") {
     return `
-      <div class="preview" part="preview" style="min-height:280px;padding:0;background:#fff;">
+      <div class="preview" part="preview" style="min-height:280px;padding:0;background:var(--embed-card-preview-canvas);">
         <div data-reddit-mount style="min-height:260px;padding:1.5rem;">
           <div style="height:10px;width:33%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 55%,transparent);margin-bottom:10px"></div>
           <div style="height:14px;width:75%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 45%,transparent);margin-bottom:10px"></div>
@@ -230,10 +240,12 @@ function renderHeaderAndDescription(resolved: ResolvedEmbed): string {
 
 export class EmbedCardElement extends HTMLElement {
   private redditHydrateAbort: AbortController | null = null
+  private colorSchemeAbort: AbortController | null = null
 
   static observedAttributes = [
     "url",
     "accent-color",
+    "appearance",
     "background",
     "border-color",
     "text-color",
@@ -247,11 +259,35 @@ export class EmbedCardElement extends HTMLElement {
       this.attachShadow({ mode: "open" })
     }
 
+    this.syncColorSchemeListener()
     this.render()
   }
 
+  disconnectedCallback(): void {
+    this.colorSchemeAbort?.abort()
+    this.colorSchemeAbort = null
+  }
+
   attributeChangedCallback(): void {
+    this.syncColorSchemeListener()
     this.render()
+  }
+
+  private syncColorSchemeListener(): void {
+    const isSystem = this.getAttribute("appearance") === "system"
+    if (!isSystem) {
+      this.colorSchemeAbort?.abort()
+      this.colorSchemeAbort = null
+      return
+    }
+    if (this.colorSchemeAbort) {
+      return
+    }
+    const ac = new AbortController()
+    this.colorSchemeAbort = ac
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", () => this.render(), { signal: ac.signal })
   }
 
   private render(): void {
@@ -261,17 +297,24 @@ export class EmbedCardElement extends HTMLElement {
 
     const url = this.getAttribute("url") ?? ""
     const resolved = resolveEmbed(url)
-    const variables = createThemeVariables({
-      accentColor: resolved.accentColor,
-      ...getThemeFromAttributes(this),
-    })
+    const theme = getThemeFromAttributes(this)
+    const resolvedMode = resolveEmbedCardAppearance(
+      theme.appearance,
+      typeof window !== "undefined"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        : false
+    )
+    const variables = createThemeVariables(
+      { accentColor: resolved.accentColor, ...theme },
+      resolvedMode
+    )
 
     this.redditHydrateAbort?.abort()
     this.redditHydrateAbort = null
 
     this.shadowRoot.innerHTML = `
       <style>${componentStyles}</style>
-      <article class="root" part="root" data-provider="${escapeHtml(resolved.provider)}" style="${variablesToInlineStyle(variables)}">
+      <article class="root" part="root" data-provider="${escapeHtml(resolved.provider)}" style="color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}">
         ${renderHeaderAndDescription(resolved)}
         ${renderPreview(resolved)}
         <div class="footer" part="footer">
@@ -325,7 +368,7 @@ export class EmbedCardElement extends HTMLElement {
       mount.replaceChildren()
       mount.style.padding = "2rem"
       mount.style.textAlign = "center"
-      mount.style.color = "#787c7e"
+      mount.style.color = "var(--embed-card-muted)"
       mount.style.fontSize = "0.9rem"
       mount.textContent = "Post unavailable."
       return

@@ -82,7 +82,7 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
   const root = el(
     doc,
     "div",
-    "font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#fff;color:#1c1c1c;min-height:280px;display:flex;flex-direction:column"
+    "font-family:var(--embed-card-font-family,system-ui,-apple-system,Segoe UI,Roboto,sans-serif);background:var(--embed-card-preview-canvas);color:var(--embed-card-text);min-height:280px;display:flex;flex-direction:column"
   )
 
   const header = el(
@@ -96,14 +96,14 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
   subLink.target = "_blank"
   subLink.rel = "noreferrer"
   subLink.appendChild(text(doc, `r/${post.subreddit}`))
-  const byline = el(doc, "span", "font-size:0.7rem;color:#787c7e")
+  const byline = el(doc, "span", "font-size:0.7rem;color:var(--embed-card-muted)")
   byline.appendChild(
     text(doc, `Posted by u/${post.author} · ${redditTimeAgo(post.created_utc)}`)
   )
   meta.appendChild(subLink)
   meta.appendChild(byline)
 
-  const logoLink = el(doc, "a", "color:#787c7e;flex-shrink:0")
+  const logoLink = el(doc, "a", "color:var(--embed-card-muted);flex-shrink:0")
   logoLink.href = postHref
   logoLink.target = "_blank"
   logoLink.rel = "noreferrer"
@@ -130,7 +130,7 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
     const p = el(
       doc,
       "p",
-      "margin:0.6rem 0 0;font-size:0.8rem;line-height:1.55;color:#4a4a4a;white-space:pre-line"
+      "margin:0.6rem 0 0;font-size:0.8rem;line-height:1.55;color:var(--embed-card-muted);white-space:pre-line"
     )
     p.appendChild(text(doc, body))
     titleBlock.appendChild(p)
@@ -141,7 +141,7 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
     const media = el(
       doc,
       "div",
-      `border-top:1px solid ${borderSoft};border-bottom:1px solid ${borderSoft};background:#f6f7f8`
+      `border-top:1px solid ${borderSoft};border-bottom:1px solid ${borderSoft};background:color-mix(in srgb, var(--embed-card-border) 25%, var(--embed-card-preview-canvas))`
     )
     const video = doc.createElement("video")
     video.src = videoUrl
@@ -181,7 +181,7 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
   const left = el(
     doc,
     "div",
-    "display:flex;flex-wrap:wrap;align-items:center;gap:1rem;color:#787c7e;font-size:0.75rem"
+    "display:flex;flex-wrap:wrap;align-items:center;gap:1rem;color:var(--embed-card-muted);font-size:0.75rem"
   )
   const score = el(doc, "span", "display:inline-flex;align-items:center;gap:0.25rem")
   score.innerHTML =
@@ -203,7 +203,7 @@ export function buildRedditCardElement(doc: Document, post: RedditPostData): HTM
   const copyBtn = el(
     doc,
     "button",
-    "display:inline-flex;align-items:center;gap:0.25rem;border:none;background:none;padding:0;cursor:pointer;font-size:0.75rem;color:#787c7e"
+    "display:inline-flex;align-items:center;gap:0.25rem;border:none;background:none;padding:0;cursor:pointer;font-size:0.75rem;color:var(--embed-card-muted)"
   )
   copyBtn.type = "button"
   copyBtn.appendChild(text(doc, "Copy link"))

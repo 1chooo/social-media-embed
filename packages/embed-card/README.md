@@ -41,6 +41,34 @@ export function BrandedEmbed() {
 }
 ```
 
+### Dark mode / appearance
+
+Pass `appearance` to control whether the card chrome (gradients, borders, preview panel) uses a light or dark palette.
+
+| Value | Behaviour |
+|---|---|
+| `"light"` (default) | Always use the light palette. |
+| `"dark"` | Always use the dark palette. |
+| `"system"` | Follow `prefers-color-scheme` at runtime; falls back to light on SSR. |
+
+```tsx
+<EmbedCard
+  url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  theme={{ appearance: "dark", accentColor: "#7c3aed" }}
+/>
+```
+
+For the **web component**, set the `appearance` attribute:
+
+```html
+<embed-card
+  url="https://vimeo.com/76979871"
+  appearance="dark"
+></embed-card>
+```
+
+`appearance="system"` subscribes to `prefers-color-scheme` and re-renders automatically when the OS theme changes.
+
 ## Web component usage
 
 ```ts

@@ -13,8 +13,8 @@ import {
 
 const cardShell: CSSProperties = {
   fontFamily: "var(--embed-card-font-family, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif)",
-  background: "#ffffff",
-  color: "#1c1c1c",
+  background: "var(--embed-card-preview-canvas)",
+  color: "var(--embed-card-text)",
   minHeight: "280px",
   display: "flex",
   flexDirection: "column",
@@ -187,7 +187,7 @@ function RedditCardLoaded({
           >
             r/{post.subreddit}
           </a>
-          <span style={{ fontSize: "0.7rem", color: "#787c7e" }}>
+          <span style={{ fontSize: "0.7rem", color: "var(--embed-card-muted)" }}>
             Posted by u/{post.author} · {redditTimeAgo(post.created_utc)}
           </span>
         </div>
@@ -195,7 +195,7 @@ function RedditCardLoaded({
           href={postHref}
           target="_blank"
           rel="noreferrer"
-          style={{ color: "#787c7e", flexShrink: 0 }}
+          style={{ color: "var(--embed-card-muted)", flexShrink: 0 }}
           aria-label="View on Reddit"
         >
           <RedditMark idPrefix={idPrefix} />
@@ -224,7 +224,7 @@ function RedditCardLoaded({
               margin: "0.6rem 0 0",
               fontSize: "0.8rem",
               lineHeight: 1.55,
-              color: "#4a4a4a",
+              color: "var(--embed-card-muted)",
               whiteSpace: "pre-line",
             }}
           >
@@ -234,7 +234,7 @@ function RedditCardLoaded({
       </div>
 
       {videoUrl ? (
-        <div style={{ borderTop: `1px solid ${borderSoft}`, borderBottom: `1px solid ${borderSoft}`, background: "#f6f7f8" }}>
+        <div style={{ borderTop: `1px solid ${borderSoft}`, borderBottom: `1px solid ${borderSoft}`, background: "color-mix(in srgb, var(--embed-card-border) 25%, var(--embed-card-preview-canvas))" }}>
           <video
             src={videoUrl}
             poster={posterUrl}
@@ -268,7 +268,7 @@ function RedditCardLoaded({
           marginTop: "auto",
         }}
       >
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", color: "#787c7e", fontSize: "0.75rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", color: "var(--embed-card-muted)", fontSize: "0.75rem" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
             <IconUpvote />
             {formatRedditScore(post.score)}
@@ -359,7 +359,7 @@ export function RedditEmbedPreview({ postUrl, className, style }: RedditEmbedPre
           padding: "2rem",
           textAlign: "center",
           fontSize: "0.9rem",
-          color: "#787c7e",
+          color: "var(--embed-card-muted)",
         }}
       >
         Post unavailable.

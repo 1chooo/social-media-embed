@@ -58,6 +58,25 @@ With an optional drop shadow (you do not need to pass `shadow: "none"` to disabl
 
 The no-shadow default is also exported as `EMBED_CARD_DEFAULT_SHADOW` from `embed-card` if you need it in your own theming code.
 
+### Dark mode
+
+Pass `appearance` to control whether the card chrome uses a light or dark palette:
+
+```tsx
+<EmbedCard
+  url="https://vimeo.com/76979871"
+  theme={{ appearance: "dark" }}
+/>
+```
+
+| `appearance` | Behavior |
+|---|---|
+| `"light"` *(default)* | Always use the light palette. |
+| `"dark"` | Always use the dark palette. |
+| `"system"` | Follow `prefers-color-scheme`; falls back to light on SSR. |
+
+See [Custom Rendering → Dark mode and appearance](./custom-rendering#dark-mode-and-appearance) for a full example wiring this to `next-themes`.
+
 ## Starter projects (full apps)
 
 The repository ships **complete minimal apps** under `examples/`, similar in spirit to the [Next.js examples collection](https://github.com/vercel/next.js/tree/canary/examples). Each folder is a standalone project you can copy or clone:

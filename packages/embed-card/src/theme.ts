@@ -16,17 +16,56 @@ export interface EmbedCardCssVariables {
   "--embed-card-radius": string
   "--embed-card-shadow": string
   "--embed-card-font-family": string
+  /**
+   * The color mixed into gradients and borders as the "light" partner.
+   * White in light mode; a near-black slate in dark mode.
+   */
+  "--embed-card-chrome-tint": string
+  /**
+   * Background used behind the iframe / preview panel radial gradient.
+   * White in light mode; a dark surface in dark mode.
+   */
+  "--embed-card-preview-canvas": string
 }
 
-const defaultTheme: Required<EmbedCardTheme> = {
+const lightDefaults = {
   accentColor: "#111827",
   background: "rgba(255, 255, 255, 0.98)",
   borderColor: "rgba(15, 23, 42, 0.12)",
   textColor: "#0f172a",
   mutedColor: "rgba(15, 23, 42, 0.62)",
+  chromeTint: "#ffffff",
+  previewCanvas: "#ffffff",
+} as const
+
+const darkDefaults = {
+  accentColor: "#e2e8f0",
+  background: "rgba(15, 23, 42, 0.97)",
+  borderColor: "rgba(226, 232, 240, 0.12)",
+  textColor: "#f1f5f9",
+  mutedColor: "rgba(226, 232, 240, 0.55)",
+  chromeTint: "#0f172a",
+  previewCanvas: "#0d1420",
+} as const
+
+const sharedDefaults = {
   radius: "24px",
   shadow: EMBED_CARD_DEFAULT_SHADOW,
   fontFamily: EMBED_CARD_DEFAULT_FONT_FAMILY,
+} as const
+
+/**
+ * Resolve the effective `"light" | "dark"` mode for a given theme.
+ * `systemPrefersDark` should come from `matchMedia("(prefers-color-scheme: dark)").matches`
+ * (pass `false` for SSR).
+ */
+export function resolveEmbedCardAppearance(
+  appearance: EmbedCardTheme["appearance"],
+  systemPrefersDark = false
+): "light" | "dark" {
+  if (appearance === "dark") return "dark"
+  if (appearance === "system") return systemPrefersDark ? "dark" : "light"
+  return "light"
 }
 
 function toSize(value: number | string | undefined, fallback: string): string {
@@ -38,17 +77,21 @@ function toSize(value: number | string | undefined, fallback: string): string {
 }
 
 export function createThemeVariables(
-  theme: EmbedCardTheme = {}
+  theme: EmbedCardTheme = {},
+  resolvedMode: "light" | "dark" = "light"
 ): EmbedCardCssVariables {
+  const d = resolvedMode === "dark" ? darkDefaults : lightDefaults
   return {
-    "--embed-card-accent": theme.accentColor ?? defaultTheme.accentColor,
-    "--embed-card-background": theme.background ?? defaultTheme.background,
-    "--embed-card-border": theme.borderColor ?? defaultTheme.borderColor,
-    "--embed-card-text": theme.textColor ?? defaultTheme.textColor,
-    "--embed-card-muted": theme.mutedColor ?? defaultTheme.mutedColor,
-    "--embed-card-radius": toSize(theme.radius, toSize(defaultTheme.radius, "24px")),
-    "--embed-card-shadow": theme.shadow ?? defaultTheme.shadow,
-    "--embed-card-font-family": theme.fontFamily ?? defaultTheme.fontFamily,
+    "--embed-card-accent": theme.accentColor ?? d.accentColor,
+    "--embed-card-background": theme.background ?? d.background,
+    "--embed-card-border": theme.borderColor ?? d.borderColor,
+    "--embed-card-text": theme.textColor ?? d.textColor,
+    "--embed-card-muted": theme.mutedColor ?? d.mutedColor,
+    "--embed-card-radius": toSize(theme.radius, sharedDefaults.radius),
+    "--embed-card-shadow": theme.shadow ?? sharedDefaults.shadow,
+    "--embed-card-font-family": theme.fontFamily ?? sharedDefaults.fontFamily,
+    "--embed-card-chrome-tint": d.chromeTint,
+    "--embed-card-preview-canvas": d.previewCanvas,
   }
 }
 

@@ -15,6 +15,7 @@ export {
   createThemeVariables,
   EMBED_CARD_DEFAULT_FONT_FAMILY,
   EMBED_CARD_DEFAULT_SHADOW,
+  resolveEmbedCardAppearance,
   variablesToInlineStyle,
 } from "./theme"
 export { EmbedCardElement, registerEmbedCard } from "./web-component"

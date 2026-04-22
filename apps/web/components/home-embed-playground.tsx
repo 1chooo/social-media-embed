@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from "react"
 import type { EmbedCardTheme } from "embed-card"
 import { EmbedCard } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
+import { useTheme } from "next-themes"
 
 import { buildSnippet, pillClassName } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
@@ -20,11 +21,14 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
     demoThemes[0].id
   )
   const [copied, setCopied] = useState(false)
+  const { resolvedTheme } = useTheme()
 
   const cardTheme = useMemo((): EmbedCardTheme => {
     const entry = demoThemes.find((d) => d.id === presetId) ?? demoThemes[0]
-    return { ...entry.theme }
-  }, [presetId])
+    const appearance: EmbedCardTheme["appearance"] =
+      resolvedTheme === "dark" ? "dark" : "light"
+    return { ...entry.theme, appearance }
+  }, [presetId, resolvedTheme])
 
   const snippet = useMemo(
     () => buildSnippet(url, cardTheme),

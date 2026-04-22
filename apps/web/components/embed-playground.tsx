@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState, type ReactNode } from "react"
 import type { EmbedCardTheme } from "embed-card"
 import { EMBED_CARD_DEFAULT_SHADOW, EmbedCard } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
+import { useTheme } from "next-themes"
 
 import {
   DEFAULTS,
@@ -118,6 +119,7 @@ export function EmbedPlayground({
   const [activePresetId, setActivePresetId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
+  const { resolvedTheme } = useTheme()
 
   const cardTheme = useMemo(() => {
     const rgb = hexToRgb(accentHex)
@@ -132,6 +134,8 @@ export function EmbedPlayground({
     const muted = rgb
       ? `rgba(${Math.max(0, rgb.r - mutedStrength)}, ${Math.max(0, rgb.g - mutedStrength)}, ${Math.max(0, rgb.b - mutedStrength)}, 0.72)`
       : "rgba(15, 23, 42, 0.62)"
+    const appearance: EmbedCardTheme["appearance"] =
+      resolvedTheme === "dark" ? "dark" : "light"
 
     return {
       accentColor: accentHex,
@@ -140,6 +144,7 @@ export function EmbedPlayground({
       mutedColor: muted,
       radius,
       ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
+      appearance,
     }
   }, [
     accentHex,
@@ -149,6 +154,7 @@ export function EmbedPlayground({
     shadowSpread,
     bgTint,
     mutedStrength,
+    resolvedTheme,
   ])
 
   const snippet = useMemo(

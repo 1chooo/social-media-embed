@@ -25,6 +25,23 @@ Then use it anywhere HTML is allowed:
 
 The `shadow` attribute is optional (same as `theme.shadow` in React). Omit it for no drop shadow, or set it to any CSS `box-shadow` value (for example `0 20px 60px rgba(15, 23, 42, 0.12)`).
 
+## Dark mode
+
+The `appearance` attribute controls chrome colors — the same three values as the React `theme.appearance` prop:
+
+```html
+<!-- always dark -->
+<embed-card url="..." appearance="dark"></embed-card>
+
+<!-- always light (default) -->
+<embed-card url="..." appearance="light"></embed-card>
+
+<!-- follow OS preference; re-renders when prefers-color-scheme changes -->
+<embed-card url="..." appearance="system"></embed-card>
+```
+
+When `appearance="system"` the element subscribes to `matchMedia("(prefers-color-scheme: dark)")` and re-renders automatically on OS theme changes. The listener is removed in `disconnectedCallback` so there are no leaks.
+
 ## Good fit for
 
 - Vue apps that want a tiny integration surface

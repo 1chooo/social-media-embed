@@ -30,8 +30,6 @@ Use `<EmbedCard url="..." />` when you want the full styled card out of the box 
 />
 ```
 
-The `theme.fontFamily` field sets `--embed-card-font-family` on the root element, which is picked up by the inner Reddit preview card and any other subcomponents.
-
 ### Live: default vs customized
 
 Same Reddit thread URL in both columns — only the `theme` prop changes. Scroll horizontally on small viewports if the cards stack.
@@ -332,32 +330,78 @@ import { RedditEmbedPreview } from "embed-card"
 />
 ```
 
-The CSS variables set on the wrapper are inherited by the inner card, which references
-`var(--embed-card-font-family, system-ui, ...)` for its font stack.
+CSS variables set on the wrapper are inherited by all `embed-card` subcomponents. See [Theming reference](#theming-reference) for the full variable list.
+
+---
+
+## Dark mode and appearance
+
+Pass `appearance` to control whether the card chrome (gradients, borders, preview panel) uses a light or dark palette.
+
+| Value | Behavior |
+|---|---|
+| `"light"` *(default)* | Always use the light palette. |
+| `"dark"` | Always use the dark palette. |
+| `"system"` | Follow `prefers-color-scheme` at runtime; falls back to light on SSR. |
+
+```tsx
+<EmbedCard
+  url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  theme={{ appearance: "dark", accentColor: "#7c3aed" }}
+/>
+```
+
+When the site's own dark mode is managed by a library such as `next-themes`, read `resolvedTheme` and pass it through:
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { EmbedCard } from "embed-card"
+import type { EmbedCardTheme } from "embed-card"
+
+export function ThemedEmbed() {
+  const { resolvedTheme } = useTheme()
+  const appearance: EmbedCardTheme["appearance"] =
+    resolvedTheme === "dark" ? "dark" : "light"
+
+  return (
+    <EmbedCard
+      url="https://vimeo.com/76979871"
+      theme={{ appearance, accentColor: "#7c3aed" }}
+    />
+  )
+}
+```
 
 ---
 
 ## Theming reference
 
-The full set of CSS variables accepted by `embed-card` components:
+The full set of CSS variables accepted by `embed-card` components, and their corresponding `EmbedCardTheme` fields:
 
-| Variable | `EmbedCardTheme` field | Default |
-|---|---|---|
-| `--embed-card-accent` | `accentColor` | `#111827` |
-| `--embed-card-background` | `background` | `rgba(255,255,255,0.98)` |
-| `--embed-card-border` | `borderColor` | `rgba(15,23,42,0.12)` |
-| `--embed-card-text` | `textColor` | `#0f172a` |
-| `--embed-card-muted` | `mutedColor` | `rgba(15,23,42,0.62)` |
-| `--embed-card-radius` | `radius` | `24px` |
-| `--embed-card-shadow` | `shadow` | `none` |
-| `--embed-card-font-family` | `fontFamily` | system-ui stack |
+| Variable | `EmbedCardTheme` field | Light default | Dark default |
+|---|---|---|---|
+| `--embed-card-accent` | `accentColor` | `#111827` | `#e2e8f0` |
+| `--embed-card-background` | `background` | `rgba(255,255,255,0.98)` | `rgba(15,23,42,0.97)` |
+| `--embed-card-border` | `borderColor` | `rgba(15,23,42,0.12)` | `rgba(226,232,240,0.12)` |
+| `--embed-card-text` | `textColor` | `#0f172a` | `#f1f5f9` |
+| `--embed-card-muted` | `mutedColor` | `rgba(15,23,42,0.62)` | `rgba(226,232,240,0.55)` |
+| `--embed-card-radius` | `radius` | `24px` | `24px` |
+| `--embed-card-shadow` | `shadow` | `none` | `none` |
+| `--embed-card-font-family` | `fontFamily` | system-ui stack | system-ui stack |
+| `--embed-card-chrome-tint` | *(derived from `appearance`)* | `#ffffff` | `#0f172a` |
+| `--embed-card-preview-canvas` | *(derived from `appearance`)* | `#ffffff` | `#0d1420` |
 
-You can use these variables directly on any wrapper div when you don't want to go through `EmbedCard`:
+`--embed-card-chrome-tint` is the color mixed into gradients and border blends. `--embed-card-preview-canvas` is the base fill behind the iframe or Reddit preview panel. Both are set automatically by `createThemeVariables` — you only need to override them if you are rendering components manually without going through `EmbedCard`.
+
+You can set any of these variables directly on a wrapper element when building a fully custom render:
 
 ```tsx
 <div style={{
   "--embed-card-border": "#e5e0d8",
   "--embed-card-font-family": "'Lora', serif",
+  "--embed-card-chrome-tint": "#f8f5f0",
+  "--embed-card-preview-canvas": "#fefcf8",
 } as React.CSSProperties}>
   <RedditEmbedPreview postUrl="..." />
 </div>
