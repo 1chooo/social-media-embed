@@ -71,6 +71,20 @@ For the **web component**, set the `appearance` attribute:
 
 `appearance="system"` subscribes to `prefers-color-scheme` and re-renders automatically when the OS theme changes.
 
+If the site uses [`next-themes`](https://github.com/pacocoursey/next-themes) (for example with Fumadocs), you can import the hydration-safe wrapper instead of wiring `useTheme()` yourself:
+
+```bash
+pnpm add next-themes
+```
+
+```tsx
+import { ThemedEmbedCard } from "embed-card/next-themes"
+
+export function ArticleEmbed() {
+  return <ThemedEmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+}
+```
+
 ### `ctaLabel`
 
 For fallback link previews (URLs that don't match a built-in provider), `ctaLabel` overrides the default "Open original" call-to-action text shown inside the card surface. It has no effect on iframe or Reddit embeds.

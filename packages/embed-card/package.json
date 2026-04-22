@@ -50,6 +50,10 @@
     "./web-component": {
       "types": "./dist/web-component.d.ts",
       "import": "./dist/web-component.js"
+    },
+    "./next-themes": {
+      "types": "./dist/next-themes.d.ts",
+      "import": "./dist/next-themes.js"
     }
   },
   "scripts": {
@@ -59,9 +63,13 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
+    "next-themes": "^0.3.0 || ^0.4.0",
     "react": "^18.3.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
+    "next-themes": {
+      "optional": true
+    },
     "react": {
       "optional": true
     }
@@ -70,6 +78,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "next-themes": "^0.4.6",
     "@types/react": "^19.2.10",
     "@1chooo/eslint-config": "workspace:*",
     "@1chooo/typescript-config": "workspace:*",

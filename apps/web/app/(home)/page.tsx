@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowRight, BookOpenText, PlayCircle } from "lucide-react"
 
 import { HomePlaygroundSection } from "@/components/home-playground-section"
-import { ThemedEmbedCard } from "@/components/themed-embed-card"
+import { ThemedEmbedCard } from "embed-card/next-themes"
 
 const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 

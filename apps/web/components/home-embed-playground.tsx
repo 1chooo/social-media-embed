@@ -7,7 +7,7 @@ import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 import { buildSnippet, pillClassName } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
-import { ThemedEmbedCard } from "@/components/themed-embed-card"
+import { ThemedEmbedCard } from "embed-card/next-themes"
 
 export type HomeEmbedPlaygroundProps = {
   /** Match docs playground: false = contained card on the marketing page. */

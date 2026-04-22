@@ -14,7 +14,7 @@ import {
   rgbaAlpha,
 } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
-import { ThemedEmbedCard } from "@/components/themed-embed-card"
+import { ThemedEmbedCard } from "embed-card/next-themes"
 
 function ControlRow({
   label,
