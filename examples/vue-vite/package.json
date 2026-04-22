@@ -1,7 +1,7 @@
 {
   "name": "embed-card-example-vue-vite",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "typecheck": "vue-tsc -b"
   },
   "dependencies": {
-    "embed-card": "0.1.4",
+    "embed-card": "0.1.5",
     "vue": "^3.5.13"
   },
   "devDependencies": {

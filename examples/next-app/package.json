@@ -1,6 +1,6 @@
 {
   "name": "embed-card-example-next-app",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "embed-card": "0.1.4",
+    "embed-card": "0.1.5",
     "next": "16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
