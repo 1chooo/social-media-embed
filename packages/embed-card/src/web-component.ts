@@ -32,7 +32,7 @@ const componentStyles = `
     min-width: 0;
     border-radius: var(--embed-card-radius);
     border: 1px solid color-mix(in srgb, var(--embed-card-border) 82%, var(--embed-card-chrome-tint) 18%);
-    background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, var(--embed-card-chrome-tint) 78%), transparent 58%), var(--embed-card-preview-canvas);
+    background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 10%, var(--embed-card-chrome-tint) 90%), transparent 50%), var(--embed-card-preview-canvas);
     box-shadow: var(--embed-card-shadow);
     font-family: inherit;
   }
@@ -78,12 +78,9 @@ function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
       : undefined
   return {
     accentColor: element.getAttribute("accent-color") ?? undefined,
-    background: element.getAttribute("background") ?? undefined,
-    borderColor: element.getAttribute("border-color") ?? undefined,
-    textColor: element.getAttribute("text-color") ?? undefined,
-    mutedColor: element.getAttribute("muted-color") ?? undefined,
     radius: element.getAttribute("radius") ?? undefined,
     shadow: element.getAttribute("shadow") ?? undefined,
+    fontFamily: element.getAttribute("font-family") ?? undefined,
     appearance,
   }
 }
@@ -144,12 +141,9 @@ export class EmbedCardElement extends HTMLElement {
     "url",
     "accent-color",
     "appearance",
-    "background",
-    "border-color",
-    "text-color",
-    "muted-color",
     "radius",
     "shadow",
+    "font-family",
     "cta-label",
   ]
 

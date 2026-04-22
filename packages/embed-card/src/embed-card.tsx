@@ -45,7 +45,7 @@ const rootStyleBase: CSSProperties = {
   borderRadius: "var(--embed-card-radius)",
   border: "1px solid color-mix(in srgb, var(--embed-card-border) 82%, var(--embed-card-chrome-tint) 18%)",
   background:
-    "radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, var(--embed-card-chrome-tint) 78%), transparent 58%), var(--embed-card-preview-canvas)",
+    "radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 10%, var(--embed-card-chrome-tint) 90%), transparent 50%), var(--embed-card-preview-canvas)",
   boxShadow: "var(--embed-card-shadow)",
 }
 

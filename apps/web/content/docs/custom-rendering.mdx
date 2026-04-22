@@ -23,7 +23,7 @@ Use `<EmbedCard url="..." />` when you want the embed surface out of the box and
   url="https://www.reddit.com/r/nextjs/comments/..."
   theme={{
     accentColor: "#ff4500",
-    borderColor: "#e5e0d8",
+    radius: 32,
     fontFamily: "Georgia, 'Times New Roman', serif",
   }}
 />
@@ -312,7 +312,7 @@ styles, pass `className` and/or `style`:
 
 ### Live: default variables vs editorial wrapper
 
-Left: `RedditEmbedPreview` with `createThemeVariables()` defaults. Right: editorial wrapper with a custom accent, serif font, and tighter radius.
+Left: `RedditEmbedPreview` with `createThemeVariables()` defaults. Right: editorial wrapper with a warm accent, serif font, tighter radius, and CSS variable overrides for finer surface control.
 
 <CustomRenderingRedditPreviewCompare />
 
@@ -376,28 +376,33 @@ export function ThemedEmbed() {
 
 ## Theming reference
 
-The full set of CSS variables accepted by `embed-card` components, and their corresponding `EmbedCardTheme` fields:
+`EmbedCardTheme` exposes five fields. Everything else is derived automatically from `accentColor` and `appearance`.
 
-| Variable | `EmbedCardTheme` field | Light default | Dark default |
-|---|---|---|---|
-| `--embed-card-accent` | `accentColor` | `#111827` | `#e2e8f0` |
-| `--embed-card-background` | `background` | `rgba(255,255,255,0.98)` | `rgba(15,23,42,0.97)` |
-| `--embed-card-border` | `borderColor` | `rgba(15,23,42,0.12)` | `rgba(226,232,240,0.12)` |
-| `--embed-card-text` | `textColor` | `#0f172a` | `#f1f5f9` |
-| `--embed-card-muted` | `mutedColor` | `rgba(15,23,42,0.62)` | `rgba(226,232,240,0.55)` |
-| `--embed-card-radius` | `radius` | `24px` | `24px` |
-| `--embed-card-shadow` | `shadow` | `none` | `none` |
-| `--embed-card-font-family` | `fontFamily` | system-ui stack | system-ui stack |
-| `--embed-card-chrome-tint` | *(derived from `appearance`)* | `#ffffff` | `#0f172a` |
-| `--embed-card-preview-canvas` | *(derived from `appearance`)* | `#ffffff` | `#0d1420` |
+| `EmbedCardTheme` field | CSS variable | Default |
+|---|---|---|
+| `accentColor` | `--embed-card-accent` | Provider's own color |
+| `radius` | `--embed-card-radius` | `24px` |
+| `shadow` | `--embed-card-shadow` | `none` |
+| `fontFamily` | `--embed-card-font-family` | system-ui stack |
+| `appearance` | *(sets palette)* | `"light"` |
 
-`--embed-card-chrome-tint` is the color mixed into gradients and border blends. `--embed-card-preview-canvas` is the base fill of the embed surface. Both are set automatically by `createThemeVariables` — you only need to override them when rendering components manually without going through `EmbedCard`. `--embed-card-background` is available for custom rendering scenarios (e.g. an outer wrapper) but is not used by the `EmbedCard` root itself.
+### Advanced: CSS variable overrides
 
-You can set any of these variables directly on a wrapper element when building a fully custom render:
+The following variables are set automatically but can be overridden on a wrapper element for fully custom rendering scenarios:
+
+| CSS variable | Light default | Dark default |
+|---|---|---|
+| `--embed-card-border` | derived from `accentColor` | derived from `accentColor` |
+| `--embed-card-background` | `rgba(255,255,255,0.98)` | `rgba(15,23,42,0.97)` |
+| `--embed-card-text` | `#0f172a` | `#f1f5f9` |
+| `--embed-card-muted` | `rgba(15,23,42,0.62)` | `rgba(226,232,240,0.55)` |
+| `--embed-card-chrome-tint` | `#ffffff` | `#0f172a` |
+| `--embed-card-preview-canvas` | `#ffffff` | `#0d1420` |
+
+`--embed-card-chrome-tint` is the color mixed into the surface gradient and border blend. `--embed-card-preview-canvas` is the base fill behind the iframe or preview panel. Set them on a wrapper element when building a fully custom render:
 
 ```tsx
 <div style={{
-  "--embed-card-border": "#e5e0d8",
   "--embed-card-font-family": "'Lora', serif",
   "--embed-card-chrome-tint": "#f8f5f0",
   "--embed-card-preview-canvas": "#fefcf8",

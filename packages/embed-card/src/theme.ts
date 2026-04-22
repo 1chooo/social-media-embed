@@ -72,8 +72,27 @@ function toSize(value: number | string | undefined, fallback: string): string {
   if (typeof value === "number") {
     return `${value}px`
   }
-
   return value ?? fallback
+}
+
+/**
+ * Derive a subtle rgba border color from a hex accent string.
+ * Falls back to `null` when the accent is not a parseable hex so the caller
+ * can use the mode default instead.
+ */
+function accentToBorder(hex: string): string | null {
+  const clean = hex.trim().replace("#", "")
+  let expanded = clean
+  if (clean.length === 3) {
+    expanded = clean.split("").map((c) => c + c).join("")
+  }
+  if (expanded.length !== 6) return null
+  const n = Number.parseInt(expanded, 16)
+  if (!Number.isFinite(n)) return null
+  const r = (n >> 16) & 255
+  const g = (n >> 8) & 255
+  const b = n & 255
+  return `rgba(${r}, ${g}, ${b}, 0.16)`
 }
 
 export function createThemeVariables(
@@ -81,12 +100,13 @@ export function createThemeVariables(
   resolvedMode: "light" | "dark" = "light"
 ): EmbedCardCssVariables {
   const d = resolvedMode === "dark" ? darkDefaults : lightDefaults
+  const derivedBorder = theme.accentColor ? accentToBorder(theme.accentColor) : null
   return {
     "--embed-card-accent": theme.accentColor ?? d.accentColor,
-    "--embed-card-background": theme.background ?? d.background,
-    "--embed-card-border": theme.borderColor ?? d.borderColor,
-    "--embed-card-text": theme.textColor ?? d.textColor,
-    "--embed-card-muted": theme.mutedColor ?? d.mutedColor,
+    "--embed-card-background": d.background,
+    "--embed-card-border": derivedBorder ?? d.borderColor,
+    "--embed-card-text": d.textColor,
+    "--embed-card-muted": d.mutedColor,
     "--embed-card-radius": toSize(theme.radius, sharedDefaults.radius),
     "--embed-card-shadow": theme.shadow ?? sharedDefaults.shadow,
     "--embed-card-font-family": theme.fontFamily ?? sharedDefaults.fontFamily,

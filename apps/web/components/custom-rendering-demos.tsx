@@ -46,14 +46,12 @@ export function CustomRenderingEmbedCardCompare() {
       </CompareColumn>
       <CompareColumn
         label="Themed"
-        caption="Same URL with `theme`: warm accent, rust border, tighter radius, and serif `fontFamily`."
+        caption="Same URL with `theme`: warm accent, tighter radius, and serif `fontFamily`."
       >
         <EmbedCard
           url={REDDIT_POST_URL}
           theme={{
             accentColor: "#c2410c",
-            borderColor: "rgba(180, 140, 90, 0.35)",
-            mutedColor: "rgba(67, 24, 7, 0.72)",
             radius: 12,
             fontFamily: "Georgia, 'Times New Roman', serif",
           }}
@@ -66,15 +64,17 @@ export function CustomRenderingEmbedCardCompare() {
 /** `RedditEmbedPreview` with default CSS variables vs editorial overrides + chrome. */
 export function CustomRenderingRedditPreviewCompare() {
   const defaultVars = createThemeVariables()
-  const editorialVars = createThemeVariables({
-    accentColor: "#b91c1c",
-    background: "#fff1f2",
-    borderColor: "rgba(185, 28, 28, 0.28)",
-    textColor: "#450a0a",
-    mutedColor: "rgba(69, 10, 10, 0.65)",
-    radius: 10,
-    fontFamily: "Georgia, 'Times New Roman', serif",
-  })
+  const editorialVars = {
+    ...createThemeVariables({
+      accentColor: "#b91c1c",
+      radius: 10,
+      fontFamily: "Georgia, 'Times New Roman', serif",
+    }),
+    "--embed-card-background": "#fff1f2",
+    "--embed-card-border": "rgba(185, 28, 28, 0.28)",
+    "--embed-card-text": "#450a0a",
+    "--embed-card-muted": "rgba(69, 10, 10, 0.65)",
+  }
 
   return (
     <div className="not-prose my-8 grid gap-8 lg:grid-cols-2">

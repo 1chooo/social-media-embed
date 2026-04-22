@@ -13,25 +13,6 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
   }
 }
 
-export function mixTowardWhite(
-  hex: string,
-  /** 0 = white, 1 = full accent */
-  amount: number
-): string {
-  const rgb = hexToRgb(hex)
-  if (!rgb) return "#ffffff"
-  const t = Math.min(1, Math.max(0, amount))
-  const mix = (c: number) => Math.round(255 + (c - 255) * t)
-  return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`
-}
-
-export function rgbaAlpha(cssColor: string): number | null {
-  const m = cssColor.match(
-    /rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)/i
-  )
-  if (!m?.[1]) return null
-  return Math.round(Number.parseFloat(m[1]) * 100)
-}
 
 /** Aligned with Reset / Copy code in the Options/Controls bar (rounded-md, 11px). */
 export function pillClassName(isActive: boolean): string {
@@ -45,18 +26,14 @@ export function pillClassName(isActive: boolean): string {
 
 export const DEFAULTS = {
   accentHex: "#e11d48",
-  radius: 28,
-  borderAlpha: 22,
+  radius: 24,
   shadowAlpha: 0,
-  shadowSpread: 72,
 }
 
 export function buildSnippet(url: string, theme: EmbedCardTheme): string {
   const r = theme.radius
-  const radiusLine =
-    typeof r === "number"
-      ? `        radius: ${r},`
-      : `        radius: ${JSON.stringify(r ?? "24px")},`
+  const radiusStr =
+    typeof r === "number" ? String(r) : JSON.stringify(r ?? "24px")
   const includeShadow =
     theme.shadow != null && theme.shadow !== EMBED_CARD_DEFAULT_SHADOW
   const shadowLine = includeShadow
@@ -75,9 +52,8 @@ export function Example() {
       url={${JSON.stringify(url)}}
       theme={{
         accentColor: ${JSON.stringify(theme.accentColor ?? "#111827")},
-        borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
-${radiusLine}${shadowLine}${appearanceLine}
-      }}
+        radius: ${radiusStr},
+${shadowLine}${appearanceLine}      }}
     />
   )
 }`

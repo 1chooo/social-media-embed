@@ -23,36 +23,17 @@ export const sampleEmbeds = [
 
 export const demoThemes = [
   {
-    id: "editorial",
-    label: "Editorial",
+    id: "default",
+    label: "Default",
     theme: {
-      accentColor: "#e11d48",
-      background: "rgba(255,255,255,0.97)",
-      borderColor: "rgba(225,29,72,0.18)",
-      mutedColor: "rgba(17,24,39,0.62)",
-      radius: 28,
-    },
-  },
-  {
-    id: "cobalt",
-    label: "Cobalt",
-    theme: {
-      accentColor: "#1d4ed8",
-      background: "rgba(239,246,255,0.97)",
-      borderColor: "rgba(29,78,216,0.18)",
-      mutedColor: "rgba(30,41,59,0.7)",
       radius: 24,
     },
   },
   {
-    id: "mint",
-    label: "Mint",
+    id: "rounded",
+    label: "Rounded",
     theme: {
-      accentColor: "#047857",
-      background: "rgba(236,253,245,0.98)",
-      borderColor: "rgba(4,120,87,0.18)",
-      mutedColor: "rgba(6,78,59,0.68)",
-      radius: 30,
+      radius: 40,
     },
   },
 ] as const

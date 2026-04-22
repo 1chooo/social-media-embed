@@ -23,12 +23,7 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
 
   const cardTheme = useMemo((): EmbedCardTheme => {
     const entry = demoThemes.find((d) => d.id === presetId) ?? demoThemes[0]
-    // Only pass accent-neutral fields so dark defaults apply correctly in dark mode.
-    // `background` and `mutedColor` from presets are light-only values — omitting them
-    // lets `createThemeVariables` pick the right defaults for each appearance mode.
     return {
-      accentColor: entry.theme.accentColor,
-      borderColor: entry.theme.borderColor,
       radius: entry.theme.radius,
     }
   }, [presetId])
@@ -123,10 +118,10 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
 
           <div>
             <p className="text-xs font-semibold text-fd-foreground">
-              Theme presets
+              Presets
             </p>
             <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              Pick a ready-made embed theme.
+              Pick a shape preset.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {demoThemes.map((preset) => (

@@ -11,7 +11,6 @@ import {
   buildSnippet,
   hexToRgb,
   pillClassName,
-  rgbaAlpha,
 } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
@@ -47,7 +46,6 @@ function ControlRow({
   )
 }
 
-/** Full mode: clear track + fill + larger thumb; transparent native track so fill shows through. */
 function SliderField({
   min,
   max,
@@ -110,36 +108,24 @@ export function EmbedPlayground({
 
   const [accentHex, setAccentHex] = useState(DEFAULTS.accentHex)
   const [radius, setRadius] = useState(DEFAULTS.radius)
-  const [borderAlpha, setBorderAlpha] = useState(DEFAULTS.borderAlpha)
   const [shadowAlpha, setShadowAlpha] = useState(DEFAULTS.shadowAlpha)
-  const [shadowSpread, setShadowSpread] = useState(DEFAULTS.shadowSpread)
   const [activePresetId, setActivePresetId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
 
-  const cardTheme = useMemo(() => {
+  const cardTheme = useMemo((): EmbedCardTheme => {
     const rgb = hexToRgb(accentHex)
-    const border = rgb
-      ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${borderAlpha / 100})`
-      : "rgba(15, 23, 42, 0.12)"
     const shadow =
       rgb && shadowAlpha > 0
-        ? `0 24px ${shadowSpread}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
+        ? `0 24px 72px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
         : "none"
 
     return {
       accentColor: accentHex,
-      borderColor: border,
       radius,
       ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
     }
-  }, [
-    accentHex,
-    radius,
-    borderAlpha,
-    shadowAlpha,
-    shadowSpread,
-  ])
+  }, [accentHex, radius, shadowAlpha])
 
   const snippet = useMemo(
     () => buildSnippet(url, cardTheme),
@@ -159,29 +145,16 @@ export function EmbedPlayground({
   const resetFull = useCallback(() => {
     setAccentHex(DEFAULTS.accentHex)
     setRadius(DEFAULTS.radius)
-    setBorderAlpha(DEFAULTS.borderAlpha)
     setShadowAlpha(DEFAULTS.shadowAlpha)
-    setShadowSpread(DEFAULTS.shadowSpread)
     setUrl(sampleEmbeds[0].url)
     setActivePresetId(null)
   }, [])
 
-  const applyDemoPresetFull = useCallback(
+  const applyPreset = useCallback(
     (id: (typeof demoThemes)[number]["id"]) => {
       const entry = demoThemes.find((d) => d.id === id)
       if (!entry) return
-      const t: EmbedCardTheme = entry.theme
-      setAccentHex(t.accentColor ?? DEFAULTS.accentHex)
-      setRadius(typeof t.radius === "number" ? t.radius : DEFAULTS.radius)
-      const ba = rgbaAlpha(
-        t.borderColor ?? "rgba(15, 23, 42, 0.12)"
-      )
-      setBorderAlpha(ba ?? DEFAULTS.borderAlpha)
-      const sa = t.shadow != null ? rgbaAlpha(t.shadow) : null
-      setShadowAlpha(sa ?? DEFAULTS.shadowAlpha)
-      const blurMatch = t.shadow?.match(/0\s+[\d.]+px\s+(\d+)px\s+rgba/i)
-      if (blurMatch?.[1])
-        setShadowSpread(Number.parseInt(blurMatch[1], 10))
+      setRadius(typeof entry.theme.radius === "number" ? entry.theme.radius : DEFAULTS.radius)
       setActivePresetId(id)
     },
     []
@@ -268,17 +241,17 @@ export function EmbedPlayground({
 
           <div>
             <p className="text-xs font-semibold text-fd-foreground">
-              Theme presets
+              Presets
             </p>
             <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              Jump to a palette, then fine-tune with the sliders below.
+              Jump to a shape preset, then fine-tune below.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {demoThemes.map((preset) => (
                 <button
                   className={pillClassName(activePresetId === preset.id)}
                   key={preset.id}
-                  onClick={() => applyDemoPresetFull(preset.id)}
+                  onClick={() => applyPreset(preset.id)}
                   type="button"
                 >
                   {preset.label}
@@ -289,10 +262,10 @@ export function EmbedPlayground({
 
           <div className="space-y-7 border-t border-fd-border pt-8">
             <p className="text-xs font-semibold text-fd-foreground">
-              Fine-tune embed surface
+              Appearance
             </p>
 
-            <ControlRow label="Accent" value={accentHex} hint="Picker + presets above.">
+            <ControlRow label="Accent" value={accentHex} hint="Card accent color.">
               <input
                 aria-label="Accent color"
                 className="h-10 w-full max-w-[220px] cursor-pointer rounded-md border border-fd-border bg-fd-background p-1"
@@ -319,29 +292,12 @@ export function EmbedPlayground({
             </ControlRow>
 
             <ControlRow
-              label="Border blend"
-              value={(borderAlpha / 100).toFixed(2)}
-              hint="Accent mixed into the border."
-            >
-              <SliderField
-                aria-label="Border blend"
-                max={60}
-                min={4}
-                onChange={(v) => {
-                  setBorderAlpha(v)
-                  setActivePresetId(null)
-                }}
-                value={borderAlpha}
-              />
-            </ControlRow>
-
-            <ControlRow
-              label="Shadow depth"
+              label="Shadow"
               value={(shadowAlpha / 100).toFixed(2)}
-              hint="Glow strength under the card."
+              hint="Glow depth under the card."
             >
               <SliderField
-                aria-label="Shadow depth"
+                aria-label="Shadow"
                 max={45}
                 min={0}
                 onChange={(v) => {
@@ -351,24 +307,6 @@ export function EmbedPlayground({
                 value={shadowAlpha}
               />
             </ControlRow>
-
-            <ControlRow
-              label="Shadow reach"
-              value={`${shadowSpread}px`}
-              hint="How far the shadow spreads."
-            >
-              <SliderField
-                aria-label="Shadow reach"
-                max={120}
-                min={32}
-                onChange={(v) => {
-                  setShadowSpread(v)
-                  setActivePresetId(null)
-                }}
-                value={shadowSpread}
-              />
-            </ControlRow>
-
           </div>
 
           <div className="border-t border-fd-border pt-6">

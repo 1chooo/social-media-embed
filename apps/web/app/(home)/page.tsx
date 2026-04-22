@@ -57,7 +57,6 @@ export default function HomePage() {
           <ThemedEmbedCard
             theme={{
               accentColor: "#e11d48",
-              borderColor: "rgba(225, 29, 72, 0.18)",
               radius: 20,
             }}
             url={exampleUrl}

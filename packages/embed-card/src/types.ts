@@ -9,19 +9,17 @@ export type EmbedReferrerPolicy =
   | "unsafe-url"
 
 export interface EmbedCardTheme {
+  /** Primary brand color. Provider's own accent is used when omitted. */
   accentColor?: string
-  background?: string
-  borderColor?: string
-  textColor?: string
-  mutedColor?: string
+  /** Corner radius. Accepts a pixel number or any valid CSS length. Defaults to `24px`. */
   radius?: number | string
-  /** Any valid CSS `box-shadow`. Omit to use the package default (no shadow). */
+  /** Any valid CSS `box-shadow`. Defaults to `"none"`. */
   shadow?: string
   /** Any valid CSS `font-family` value. Defaults to system-ui sans-serif stack. */
   fontFamily?: string
   /**
-   * Controls chrome surface colors (gradients, preview panel, borders).
-   * - `"light"` — always use the default light palette (default when omitted).
+   * Controls the surface palette (gradients, preview panel, borders).
+   * - `"light"` — always use the light palette (default when omitted).
    * - `"dark"`  — always use a dark palette.
    * - `"system"` — follow `prefers-color-scheme` at runtime; falls back to light on SSR.
    */
