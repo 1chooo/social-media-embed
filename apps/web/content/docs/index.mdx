@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: Start with the package shape, the monorepo layout, runnable examples, and the supported providers.
+description: Start with the package shape, the monorepo layout, runnable examples, the interactive playground, and the supported providers.
 ---
 
 # `embed-card`
@@ -20,7 +20,7 @@ Published as [`embed-card` on npm](https://www.npmjs.com/package/embed-card).
 ## What this repo includes
 
 - A publishable package in `packages/embed-card`
-- A Next.js docs site and interactive playground in `apps/web`
+- A Next.js docs site in `apps/web`, including an interactive [Playground](/docs/playground) (also on the marketing home page under **Playground**): sample URLs, live preview, and a minimal `<EmbedCard url={…} />` snippet you can copy from the code block
 - **Runnable starter apps** under `examples/` (Next.js App Router, Vite + React, Vue, Svelte, and vanilla TypeScript). Each example installs `embed-card` from npm and shares the same demo layout so you can compare stacks side by side.
 
 The monorepo uses **pnpm** workspaces and **Turborepo**: root `pnpm build` and `pnpm typecheck` include the example apps; root `pnpm dev` runs the docs app only so local development stays a single dev server.

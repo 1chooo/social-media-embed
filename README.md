@@ -7,7 +7,7 @@ URL embed cards for **YouTube, X, Reddit, Vimeo, Google Maps**, and a link-previ
 ## Workspace layout
 
 ```txt
-apps/web/          Next.js site + interactive playground
+apps/web/          Next.js site + docs playground (URL samples, preview, snippet copy)
 packages/embed-card/   npm package: embed cards + providers
 packages/ui/           Shared shadcn/ui
 examples/              Standalone apps (Next, Vite+React, Vue, Svelte, vanilla)

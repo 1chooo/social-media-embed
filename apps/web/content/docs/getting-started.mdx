@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Install the package, render your first card, clone a starter example, and understand the workspace layout.
+description: Install the package, render your first card, try the interactive playground, clone a starter example, and understand the workspace layout.
 ---
 
 # Getting Started
@@ -22,6 +22,14 @@ export function ArticleEmbed() {
   )
 }
 ```
+
+## Interactive playground
+
+You can try links without wiring up a project first:
+
+- **Docs:** [Playground](/docs/playground) — paste a URL or pick a sample, watch the preview update, then copy the generated snippet from the code block (the same flow as on the site home page under **Playground**).
+
+The snippet shows the minimal `EmbedCard` usage with **`url` only**. Optional styling and light/dark still use the `theme` prop, as in the next section.
 
 ## Theme the card
 
@@ -112,7 +120,7 @@ Browse the same paths on GitHub: [github.com/1chooo/embed-card/tree/main/example
 
 ```txt
 apps/
-  web/          -> docs site + interactive playground
+  web/          -> docs site + playground (URL samples, preview, copy snippet)
 packages/
   embed-card/   -> publishable library
   ui/           -> shared UI (internal to this monorepo)
