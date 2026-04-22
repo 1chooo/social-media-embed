@@ -57,3 +57,5 @@ Publish the `embed-card` package (maintainers): `pnpm publish:embed-card` from t
 ## License
 
 `embed-card` is published under the [MIT License](packages/embed-card/LICENSE).
+
+![npm downloads](https://33fa1ur95-jz5ocwq7r-1chooo.vercel.app/api/npm/chart?package=embed-card&period=7d&color=%232563eb&width=800&height=300&theme=light)
