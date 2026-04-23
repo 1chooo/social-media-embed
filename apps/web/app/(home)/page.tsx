@@ -6,7 +6,6 @@ import { FeatureGrid } from "@/components/home/feature-grid"
 import { HomeGuidesShowcase } from "@/components/home/home-guides-showcase"
 import { HomePlatformsSection } from "@/components/home/home-platforms-section"
 import { HeroSection } from "@/components/home/hero-section"
-import { InstallCommand } from "@/components/home/install-command"
 import { HomePlaygroundSection } from "@/components/home-playground-section"
 import { SITE_GITHUB_URL, SITE_NPM_URL } from "@/lib/layout.shared"
 import { ThemedEmbedCard } from "embed-card/next-themes"
@@ -62,15 +61,6 @@ export default function HomePage() {
               />
             }
           />
-
-          <div className="border-t border-fd-border px-5 py-8 sm:px-8">
-            <p className="text-[11px] font-semibold tracking-wider text-fd-muted-foreground uppercase">
-              Install
-            </p>
-            <div className="mt-4 max-w-2xl">
-              <InstallCommand />
-            </div>
-          </div>
 
           <HomePlaygroundSection />
         </div>

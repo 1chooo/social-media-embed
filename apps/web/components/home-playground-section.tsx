@@ -2,6 +2,7 @@ import Link from "next/link"
 import { PanelRight } from "lucide-react"
 
 import { HomeEmbedPlayground } from "@/components/home-embed-playground"
+import { InstallCommand } from "@/components/home/install-command"
 
 const btnOutline =
   "inline-flex items-center justify-center rounded-sm border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
@@ -43,6 +44,15 @@ export function HomePlaygroundSection() {
               <PanelRight className="size-3.5 opacity-90" aria-hidden />
               Full controls
             </Link>
+          </div>
+
+          <div className="mx-auto w-full max-w-xl border-t border-fd-border pt-6 text-left">
+            <p className="text-[11px] font-semibold tracking-wider text-fd-muted-foreground uppercase">
+              Install
+            </p>
+            <div className="mt-3">
+              <InstallCommand />
+            </div>
           </div>
         </div>
 
