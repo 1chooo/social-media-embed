@@ -71,6 +71,8 @@ export default function HomePage() {
               <InstallCommand />
             </div>
           </div>
+
+          <HomePlaygroundSection />
         </div>
 
         <section className="space-y-5">
@@ -126,8 +128,6 @@ export default function HomePage() {
           </div>
           <DocHighlightCards />
         </section>
-
-        <HomePlaygroundSection />
       </div>
     </>
   )
