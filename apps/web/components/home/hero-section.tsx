@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowRight, BookOpenText, PlayCircle } from "lucide-react"
+import { InstallCommand } from "@/components/home/install-command"
 
 export type HeroSectionProps = {
   preview: ReactNode
@@ -28,6 +29,9 @@ export function HeroSection({ preview }: HeroSectionProps) {
             sensible fallback when nothing matches.
           </p>
         </div>
+        <div className="mt-3">
+          <InstallCommand />
+        </div>
         <div className="flex flex-wrap gap-3">
           <Link
             className="inline-flex h-10 items-center gap-2 rounded-sm bg-fd-primary px-4 text-sm font-medium text-fd-primary-foreground shadow-sm transition hover:opacity-90"
@@ -45,19 +49,6 @@ export function HeroSection({ preview }: HeroSectionProps) {
             Playground
           </Link>
         </div>
-        <p className="max-w-lg text-sm leading-6 text-fd-muted-foreground">
-          React, web component, and manual rendering paths ship from one
-          package. Examples live in the repo under{" "}
-          <code className="font-mono text-xs">examples/</code>. The full
-          playground with docs chrome lives at{" "}
-          <Link
-            className="font-medium text-fd-foreground underline-offset-2 hover:underline"
-            href="/docs/playground"
-          >
-            /docs/playground
-          </Link>
-          .
-        </p>
       </div>
 
       <div className="min-w-0">
