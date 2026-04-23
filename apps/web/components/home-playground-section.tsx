@@ -24,8 +24,9 @@ export function HomePlaygroundSection() {
             Playground
           </h2>
           <p className="text-balance text-base leading-relaxed text-fd-muted-foreground sm:text-lg">
-            Pick a sample to refresh the minimal React snippet. For a live
-            preview, URL field, and full layout, open{" "}
+            Live preview on the left; pick a sample to swap the embed and
+            snippet on the right. For URL input, reset, and the full docs
+            chrome, open{" "}
             <Link
               className="font-medium text-fd-foreground underline-offset-2 hover:underline"
               href="/docs/playground"
