@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "type": "module",
   "private": false,
-  "description": "Framework-friendly embed cards for YouTube, X, Reddit, Google Maps, Vimeo, and custom providers.",
+  "description": "Framework-friendly embed cards for YouTube, X, Instagram, Reddit, Google Maps, Vimeo, and custom providers.",
   "license": "MIT",
   "author": "Lin Hugo (@1chooo)",
   "authorUrl": "https://1chooo.com",
@@ -20,7 +20,8 @@
     "twitter",
     "reddit",
     "vimeo",
-    "google-maps"
+    "google-maps",
+    "instagram"
   ],
   "sideEffects": false,
   "files": [
@@ -60,7 +61,8 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "next-themes": "^0.3.0 || ^0.4.0",
@@ -83,6 +85,7 @@
     "@1chooo/eslint-config": "workspace:*",
     "@1chooo/typescript-config": "workspace:*",
     "eslint": "^9.39.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

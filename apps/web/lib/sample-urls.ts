@@ -8,6 +8,10 @@ export const sampleEmbeds = [
     url: "https://x.com/1chooo___/status/2028573993972969585",
   },
   {
+    label: "Instagram",
+    url: "https://www.instagram.com/p/DXKYttciGe7/",
+  },
+  {
     label: "Reddit",
     url: "https://www.reddit.com/r/github/comments/1j6jga7/i_rebuilt_my_personal_portfolio_using_nextjsits/",
   },

@@ -10,6 +10,8 @@ export {
 export type { RedditPostData, RedditVideo } from "./reddit-data"
 export { RedditCopyLinkButton, RedditEmbedPreview } from "./reddit-embed"
 export type { RedditCopyLinkButtonProps, RedditEmbedPreviewProps } from "./reddit-embed"
+export { fetchInstagramOEmbed } from "./instagram-oembed"
+export type { InstagramOEmbedResult } from "./instagram-oembed"
 export { createEmbedProvider, defaultProviders } from "./providers"
 export { resolveEmbed } from "./resolve"
 export {

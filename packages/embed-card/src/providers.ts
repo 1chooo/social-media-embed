@@ -1,3 +1,4 @@
+import { instagramEmbedSrc, isInstagramHost, parseInstagramPermalink } from "./instagram-url"
 import type { EmbedProvider, ResolvedEmbed, ResolveEmbedContext } from "./types"
 
 function getDisplayUrl(url: URL): string {
@@ -53,13 +54,14 @@ function createInvalidEmbed(input: string): ResolvedEmbed {
     accentColor: "#dc2626",
     title: "Paste a valid URL",
     description:
-      "Embed Card accepts full links like YouTube videos, X posts, Reddit threads, Vimeo videos, and Google Maps.",
+      "Embed Card accepts full links like YouTube videos, X posts, Instagram posts and reels, Reddit threads, Vimeo videos, and Google Maps.",
     site: "invalid-input",
     url: input,
     displayUrl: input,
     renderer: {
       type: "invalid",
-      message: "Use a full URL such as https://www.youtube.com/watch?v=...",
+      message:
+        "Use a full URL such as https://www.youtube.com/watch?v=... or https://www.instagram.com/reel/...",
     },
   }
 }
@@ -162,6 +164,34 @@ const twitterProvider: EmbedProvider = {
   },
 }
 
+const instagramProvider: EmbedProvider = {
+  id: "instagram",
+  label: "Instagram",
+  accentColor: "#E1306C",
+  match: (url) => isInstagramHost(url.hostname),
+  resolve: (url, _context?: ResolveEmbedContext) => {
+    const permalink = parseInstagramPermalink(url)
+
+    if (!permalink) {
+      return null
+    }
+
+    return createResolvedEmbed(url, instagramProvider, {
+      title: "Instagram",
+      description:
+        "Official Instagram embeds in a responsive frame—no app token required for the default iframe experience.",
+      renderer: {
+        type: "iframe",
+        src: instagramEmbedSrc(permalink),
+        title: "Embedded Instagram post",
+        aspectRatio: "1 / 1",
+        minHeight: 520,
+        referrerPolicy: "strict-origin-when-cross-origin",
+      },
+    })
+  },
+}
+
 const redditProvider: EmbedProvider = {
   id: "reddit",
   label: "Reddit",
@@ -247,6 +277,7 @@ const vimeoProvider: EmbedProvider = {
 export const defaultProviders: readonly EmbedProvider[] = [
   youtubeProvider,
   twitterProvider,
+  instagramProvider,
   redditProvider,
   googleMapsProvider,
   vimeoProvider,

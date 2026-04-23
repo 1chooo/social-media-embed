@@ -16,6 +16,9 @@
     "typecheck": {
       "dependsOn": ["^typecheck", "^build"]
     },
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
